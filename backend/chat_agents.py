@@ -26,8 +26,8 @@ class ChatAgent:
         return response.choices[0].message
 
     def chat(self, other_agent):
-        text1 = self.knowledge['original_text']
-        text2 = other_agent.knowledge['original_text']
+        text1 = self.knowledge['projects']  # Adjusted to use projects or education as needed
+        text2 = other_agent.knowledge['projects']  # Adjusted to use projects or education as needed
         chat_history = []
         for _ in range(5):  # 5 conversations
             prompt1 = f"{self.name}, based on the following text, let's discuss our professional backgrounds and explore networking opportunities:\n{text1}"

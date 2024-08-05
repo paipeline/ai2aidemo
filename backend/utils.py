@@ -31,7 +31,6 @@ def extract_info_from_text(text):
     education = re.findall(r'University\s+[\w\s]+', text)
 
     return {
-        "original_text": text,
         "projects": projects,
         "education": education
     }
