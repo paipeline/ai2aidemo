@@ -13,10 +13,10 @@ class ChatAgent:
 
     def generate_response(self, prompt):
         response = client.chat.completions.create(
-            model = "gpt-4o-mini",
-            message = [
-                {"role": "system","content": "you are a chatbot"},
-                {"role": "user","content":prompt}
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant for networking conversations."},
+                {"role": "user", "content": prompt}
             ]
         )
         return response.choices[0].message
@@ -26,12 +26,12 @@ class ChatAgent:
         common_education = set(self.knowledge['education']) & set(other_agent.knowledge['education'])
         chat_history = []
         for _ in range(10):  # 10 conversations
-            prompt1 = f"{self.name}, discuss your background based on the OCR text."
+            prompt1 = f"{self.name}, let's discuss our professional backgrounds and explore networking opportunities."
             response1 = self.generate_response(prompt1)
             chat_history.append(f'{self.name}: {response1}')
             time.sleep(1)  # Wait for 1 second
 
-            prompt2 = f"{other_agent.name}, respond to the previous message."
+            prompt2 = f"{other_agent.name}, how do you relate to the previous message and what networking opportunities do you see?"
             response2 = other_agent.generate_response(prompt2)
             chat_history.append(f'{other_agent.name}: {response2}')
             time.sleep(1)  # Wait for 1 second
