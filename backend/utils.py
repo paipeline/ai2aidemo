@@ -20,7 +20,8 @@ def parse_pdf(file):
             pix = page.get_pixmap()
             img = Image.open(BytesIO(pix.tobytes()))
             text += pytesseract.image_to_string(img)
-    return extract_info_from_text(text)
+        logging.info(f'OCR extracted text: {text}')  # Log the OCR extracted text
+        return extract_info_from_text(text)
 
 import re
 
