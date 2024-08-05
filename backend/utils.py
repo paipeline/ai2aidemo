@@ -12,10 +12,13 @@ def parse_pdf(file):
         text += page.get_text()
     return extract_info_from_text(text)
 
+import re
+
 def extract_info_from_text(text):
-    # Dummy implementation for extracting information
-    # You should replace this with actual parsing logic
+    projects = re.findall(r'Project\s+[\w\s]+', text)
+    education = re.findall(r'University\s+[\w\s]+', text)
+    
     return {
-        "projects": ["Project A", "Project B"],
-        "education": ["University X", "University Y"]
+        "projects": projects,
+        "education": education
     }
