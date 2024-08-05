@@ -19,7 +19,7 @@ class ChatAgent:
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant for networking conversations."},
+                {"role": "system", "content": "You are a helpful assistant for networking conversations. here is your personal background"},
                 {"role": "user", "content": prompt}
             ]
         )
@@ -34,6 +34,7 @@ class ChatAgent:
             response1 = self.generate_response(prompt1)
             chat_history.append(f'{self.name}: {response1}')
             logging.info(f'{self.name}: {response1}')
+            
             prompt2 = f"{other_agent.name}, based on the following text, how do you relate to the previous message and what networking opportunities do you see?\n{text2}"
             response2 = other_agent.generate_response(prompt2)
             chat_history.append(f'{other_agent.name}: {response2}')
