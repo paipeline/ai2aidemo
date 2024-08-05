@@ -45,10 +45,6 @@ class ChatAgent:
             chat_history.append(f'{other_agent.name}: {response2}')
             time.sleep(1)  # Wait for 1 second
 
-        if common_projects:
-            chat_history.append(f'{self.name}: We have worked on common projects: {", ".join(common_projects)}')
-        if common_education:
-            chat_history.append(f'{self.name}: We share a similar educational background: {", ".join(common_education)}')
 
         for line in chat_history:
             yield line
