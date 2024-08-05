@@ -19,6 +19,8 @@ class ChatAgent:
         return response.choices[0].message['content']
 
     def chat(self, other_agent):
+        common_projects = set(self.knowledge['projects']) & set(other_agent.knowledge['projects'])
+        common_education = set(self.knowledge['education']) & set(other_agent.knowledge['education'])
         chat_history = []
         for _ in range(10):  # 10 conversations
             prompt1 = f"{self.name}, discuss your background based on the OCR text."
@@ -32,9 +34,9 @@ class ChatAgent:
             time.sleep(1)  # Wait for 1 second
 
         if common_projects:
-            chat_history.append(f'{self.name}: We have worked on common projects: {common_projects}')
+            chat_history.append(f'{self.name}: We have worked on common projects: {", ".join(common_projects)}')
         if common_education:
-            chat_history.append(f'{self.name}: We share a similar educational background: {common_education}')
+            chat_history.append(f'{self.name}: We share a similar educational background: {", ".join(common_education)}')
 
         return chat_history
 
