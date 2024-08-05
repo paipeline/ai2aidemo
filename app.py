@@ -1,6 +1,6 @@
 import streamlit as st
 from backend.chat_agents import create_agents
-from backend.utils import load_resume
+from backend.utils import load_resume, parse_pdf
 
 st.title('Resume Chat Between LLM Agents')
 
