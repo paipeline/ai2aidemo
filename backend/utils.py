@@ -1,4 +1,5 @@
 import json
+import logging
 import fitz  # PyMuPDF
 import pytesseract
 from PIL import Image
