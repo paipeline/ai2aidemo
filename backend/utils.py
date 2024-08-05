@@ -7,8 +7,6 @@ from io import BytesIO
 
 def load_resume(file):
     resume = json.load(file)
-    with open('resume_log.txt', 'a') as log_file:  # Open log file in append mode
-        log_file.write(json.dumps(resume) + '\n')  # Log the resume text
     return resume
 
 def parse_pdf(file):
