@@ -34,6 +34,9 @@ class ChatAgent:
             response1 = self.generate_response(prompt1)
             chat_history.append(f'{self.name}: {response1}')
             logging.info(f'{self.name}: {response1}')
+            prompt2 = f"{other_agent.name}, how do you relate to the previous message and what networking opportunities do you see?"
+            response2 = other_agent.generate_response(prompt2)
+            chat_history.append(f'{other_agent.name}: {response2}')
             logging.info(f'{other_agent.name}: {response2}')
             time.sleep(1)  # Wait for 1 second
 
