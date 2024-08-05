@@ -12,7 +12,10 @@ if resume_file1 and resume_file2:
     resume1 = parse_pdf(resume_file1)
     resume2 = parse_pdf(resume_file2)
     agent1, agent2 = create_agents(resume1, resume2)
-    chat_history = agent1.chat(agent2)
+    chat_history = agent1.chat(agent2)  # Create a generator for real-time updates
+    for line in chat_history:
+        st.text(line)  # Display each line as it is generated
+        st.experimental_rerun()  # Rerun the app to show the latest conversation
 
     # Display chat history
     for line in chat_history:

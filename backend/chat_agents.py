@@ -50,7 +50,8 @@ class ChatAgent:
         if common_education:
             chat_history.append(f'{self.name}: We share a similar educational background: {", ".join(common_education)}')
 
-        return chat_history
+        for line in chat_history:
+            yield line
 
 
 def create_agents(resume1, resume2):
