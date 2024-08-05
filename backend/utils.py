@@ -22,7 +22,15 @@ def parse_pdf(file):
             img = Image.open(BytesIO(pix.tobytes()))
             text += pytesseract.image_to_string(img)
         logging.info(f'OCR extracted text: {text}')  # Log the OCR extracted text
-        return text.strip() if text.strip() else ""  # Return raw text directly
+        if not text.strip():  # If no text was extracted, try OCR
+            text = ""
+            for page_num in range(len(doc)):
+                page = doc.load_page(page_num)
+                pix = page.get_pixmap()
+                img = Image.open(BytesIO(pix.tobytes()))
+                text += pytesseract.image_to_string(img)
+            logging.info(f'OCR extracted text: {text}')  # Log the OCR extracted text
+        return text.strip()  # Ensure it always returns a string
 
 import re
 
