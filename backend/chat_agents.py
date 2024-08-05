@@ -1,7 +1,7 @@
 import json
-import openai
+from openai import OpenAI
 import time
-
+client = OpenAI()
 class ChatAgent:
     def __init__(self, name, resume):
         self.name = name
@@ -12,11 +12,14 @@ class ChatAgent:
         return resume  # Directly return the resume assuming it's already a dictionary
 
     def generate_response(self, prompt):
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}]
+        response = client.chat.completions.create(
+            model = "gpt-4o-mini",
+            message = [
+                {"role": "system","content": "you are a chatbot"},
+                {"role": "user","content":prompt}
+            ]
         )
-        return response.choices[0].message['content']
+        return response.choices[0].message
 
     def chat(self, other_agent):
         common_projects = set(self.knowledge['projects']) & set(other_agent.knowledge['projects'])
