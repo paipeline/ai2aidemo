@@ -12,12 +12,16 @@ if resume_file1 and resume_file2:
     resume1 = parse_pdf(resume_file1)
     resume2 = parse_pdf(resume_file2)
     agent1, agent2 = create_agents(resume1, resume2)
-    chat_history = agent1.chat(agent2)  # Create a generator for real-time updates
-    for line in chat_history:
-        st.text(line)  # Display each line as it is generated
-        st.experimental_rerun()  # Rerun the app to show the latest conversation
+    chat_history = []  # Initialize chat history list
+    for line in agent1.chat(agent2):
+        chat_history.append(line)  # Append each line to chat history
 
-    # Display chat history
+    # Display chat history in a chat-like format
+    for message in chat_history:
+        if message.startswith('Agent 1:'):
+            st.markdown(f"<div style='text-align: left; background-color: #e1ffc7; padding: 10px; border-radius: 10px; margin: 5px;'> {message} </div>", unsafe_allow_html=True)
+        else:
+            st.markdown(f"<div style='text-align: right; background-color: #d1e7ff; padding: 10px; border-radius: 10px; margin: 5px;'> {message} </div>", unsafe_allow_html=True)
     for line in chat_history:
         st.text(line)
 else:
