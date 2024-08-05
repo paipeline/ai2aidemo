@@ -1,7 +1,11 @@
 import json
+import logging
 from openai import OpenAI
 import time
 client = OpenAI()
+# Configure logging
+logging.basicConfig(filename='agent_conversations.log', level=logging.INFO, format='%(asctime)s - %(message)s')
+
 class ChatAgent:
     def __init__(self, name, resume):
         self.name = name
@@ -29,6 +33,8 @@ class ChatAgent:
             prompt1 = f"{self.name}, let's discuss our professional backgrounds and explore networking opportunities."
             response1 = self.generate_response(prompt1)
             chat_history.append(f'{self.name}: {response1}')
+            logging.info(f'{self.name}: {response1}')
+            logging.info(f'{other_agent.name}: {response2}')
             time.sleep(1)  # Wait for 1 second
 
             prompt2 = f"{other_agent.name}, how do you relate to the previous message and what networking opportunities do you see?"
