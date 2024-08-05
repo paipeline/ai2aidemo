@@ -26,15 +26,15 @@ class ChatAgent:
         return response.choices[0].message
 
     def chat(self, other_agent):
-        common_projects = set(self.knowledge['projects']) & set(other_agent.knowledge['projects'])
-        common_education = set(self.knowledge['education']) & set(other_agent.knowledge['education'])
+        text1 = self.knowledge['original_text']
+        text2 = other_agent.knowledge['original_text']
         chat_history = []
         for _ in range(5):  # 5 conversations
-            prompt1 = f"{self.name}, let's discuss our professional backgrounds and explore networking opportunities."
+            prompt1 = f"{self.name}, based on the following text, let's discuss our professional backgrounds and explore networking opportunities:\n{text1}"
             response1 = self.generate_response(prompt1)
             chat_history.append(f'{self.name}: {response1}')
             logging.info(f'{self.name}: {response1}')
-            prompt2 = f"{other_agent.name}, how do you relate to the previous message and what networking opportunities do you see?"
+            prompt2 = f"{other_agent.name}, based on the following text, how do you relate to the previous message and what networking opportunities do you see?\n{text2}"
             response2 = other_agent.generate_response(prompt2)
             chat_history.append(f'{other_agent.name}: {response2}')
             logging.info(f'{other_agent.name}: {response2}')
