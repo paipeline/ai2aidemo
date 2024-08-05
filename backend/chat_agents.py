@@ -29,7 +29,7 @@ class ChatAgent:
         common_projects = set(self.knowledge['projects']) & set(other_agent.knowledge['projects'])
         common_education = set(self.knowledge['education']) & set(other_agent.knowledge['education'])
         chat_history = []
-        for _ in range(10):  # 10 conversations
+        for _ in range(5):  # 5 conversations
             prompt1 = f"{self.name}, let's discuss our professional backgrounds and explore networking opportunities."
             response1 = self.generate_response(prompt1)
             chat_history.append(f'{self.name}: {response1}')
