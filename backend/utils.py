@@ -1,5 +1,8 @@
 import json
 import fitz  # PyMuPDF
+import pytesseract
+from PIL import Image
+from io import BytesIO
 
 def load_resume(file):
     resume = json.load(file)
@@ -10,6 +13,13 @@ def parse_pdf(file):
     text = ""
     for page in doc:
         text += page.get_text()
+    if not text.strip():  # If no text was extracted, try OCR
+        text = ""
+        for page_num in range(len(doc)):
+            page = doc.load_page(page_num)
+            pix = page.get_pixmap()
+            img = Image.open(BytesIO(pix.tobytes()))
+            text += pytesseract.image_to_string(img)
     return extract_info_from_text(text)
 
 import re
