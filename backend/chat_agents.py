@@ -13,6 +13,9 @@ class ChatAgent:
         self.resume = resume
         self.knowledge = self.extract_knowledge(resume)
 
+    def get_name(self):
+        return self.name  # Return the agent's name
+
     def extract_knowledge(self, resume):
         return resume  # Directly return the resume assuming it's already a dictionary
 
