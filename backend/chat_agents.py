@@ -33,7 +33,7 @@ class ChatAgent:
         text1 = self.knowledge  # Use the raw text directly
         text2 = other_agent.knowledge  # Use the raw text directly
         chat_history = []
-        for _ in range(10):  # Run for 10 exchanges
+        for _ in range(5):  # Run for 10 exchanges
             prompt1 = f"{self.name}, based on the following text, let's discuss our professional backgrounds and explore networking opportunities:\n{text1}"
             response1 = self.generate_response(prompt1)
             chat_history.append(f'{self.name}: {response1}')
