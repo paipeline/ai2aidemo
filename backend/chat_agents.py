@@ -34,20 +34,20 @@ class ChatAgent:
         text2 = other_agent.knowledge  # Use the raw text directly
         chat_history = []
         for _ in range(5):  # Run for 10 exchanges
-            prompt1 = f"{self.name}, based on the following text, let's discuss our professional backgrounds and explore networking opportunities:\n{text1}"
+            prompt1 = f"{self.name}, based on the following text, let's discuss our professional backgrounds. What specific experiences do you think are most relevant to our networking opportunities?\n{text1}"
             response1 = self.generate_response(prompt1)
             chat_history.append(f'{self.name}: {response1}')
             self.conversation_history.append(f'{self.name}: {response1}')  # Record the conversation
             logging.info(f'{self.name}: {response1}')
             
-            prompt2 = f"{other_agent.name}, based on the following text, how do you relate to the previous message and what networking opportunities do you see?\n{text2}"  # First response
+            prompt2 = f"{other_agent.name}, based on the following text, how do you relate to the previous message? Can you share an experience that aligns with this?\n{text2}"  # First response
             response2 = other_agent.generate_response(prompt2)
             chat_history.append(f'{other_agent.name}: {response2}')
             self.conversation_history.append(f'{other_agent.name}: {response2}')  # Record the conversation
             logging.info(f'{other_agent.name}: {response2}')
             time.sleep(1)  # Wait for 1 second
 
-            prompt2 = f"{other_agent.name}, how do you relate to the previous message and what networking opportunities do you see?"  # Second response
+            prompt2 = f"{other_agent.name}, can you elaborate on your previous response? What specific networking opportunities do you envision based on your experience?\n{text2}"  # Second response
             response2 = other_agent.generate_response(prompt2)
             chat_history.append(f'{other_agent.name}: {response2}')
             time.sleep(1)  # Wait for 1 second
