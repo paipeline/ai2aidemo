@@ -4,7 +4,7 @@ from openai import OpenAI
 import time
 client = OpenAI()
 # Configure logging
-logging.basicConfig(filename='agent_conversations.log', level=logging.INFO, format='%(asctime)s - %(message)s')
+logging.basicConfig(filename='agent_conversations.log', level=logging.DEBUG, format='%(asctime)s - %(message)s')
 
 class ChatAgent:
     def __init__(self, name, resume):
@@ -23,13 +23,13 @@ class ChatAgent:
                 {"role": "user", "content": prompt}
             ]
         )
-        return response.choices[0].message
+        return response.choices[0].message.content
 
     def chat(self, other_agent):
         text1 = self.knowledge  # Use the raw text directly
         text2 = other_agent.knowledge  # Use the raw text directly
         chat_history = []
-        for _ in range(5):  # 5 conversations
+        for _ in range(2):
             prompt1 = f"{self.name}, based on the following text, let's discuss our professional backgrounds and explore networking opportunities:\n{text1}"
             response1 = self.generate_response(prompt1)
             chat_history.append(f'{self.name}: {response1}')
