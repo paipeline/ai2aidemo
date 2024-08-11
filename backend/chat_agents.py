@@ -53,7 +53,10 @@ class ChatAgent:
             time.sleep(1)  # Wait for 1 second
 
 
-        for line in chat_history:
+        # Write the conversation history to a text file
+        with open('conversation_log.txt', 'w') as f:
+            for line in chat_history:
+                f.write(f"{line}\n")  # Write each line to the file
             yield line
 
 
