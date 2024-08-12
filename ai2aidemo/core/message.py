@@ -5,6 +5,8 @@ from typing import List
 
 
 class Message(BaseModel, ABC):
+    class Config:
+        arbitrary_types_allowed = True
     """
     It takes three parameters: agent1 resumes, agent2 resumes, context, topics
     """
