@@ -13,9 +13,8 @@ class Message(BaseModel, ABC):
     agent1: Agent
     agent2: Agent
 
-    def __init__(self, agent1: Agent, agent2: Agent):
-        self.agent1 = agent1
-        self.agent2 = agent2
+    agent1: Agent
+    agent2: Agent
     @abstractmethod
     def send_message(self,topic,context):
         pass
@@ -31,8 +30,6 @@ class Question(Message):
     Args:
         ABC (_type_): _description_
     """
-    def __init__(self, agent1: Agent, agent2: Agent):
-        super().__init__(agent1=agent1, agent2=agent2)
     
     def send_message(self, topic: str, context: List[str]):
         last_message = context[-1]
