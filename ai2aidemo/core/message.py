@@ -1,4 +1,4 @@
-from agent2 import Agent2
+from agent2 import Agent
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
 from typing import List
@@ -8,10 +8,10 @@ class Message(BaseModel, ABC):
     """
     It takes three parameters: agent1 resumes, agent2 resumes, context, topics
     """
-    agent1: Agent2
-    agent2: Agent2
+    agent1: Agent
+    agent2: Agent
 
-    def __init__(self, agent1: Agent2, agent2: Agent2):
+    def __init__(self, agent1: Agent, agent2: Agent):
         self.agent1 = agent1
         self.agent2 = agent2
     @abstractmethod
@@ -29,7 +29,7 @@ class Question(Message):
     Args:
         ABC (_type_): _description_
     """
-    def __init__(self, agent1: Agent2, agent2: Agent2):
+    def __init__(self, agent1: Agent, agent2: Agent):
         super().__init__(agent1=agent1, agent2=agent2)
     
     def send_message(self, topic: str, context: List[str]):
@@ -46,8 +46,8 @@ class Question(Message):
 
     @staticmethod
     def use_case():
-        # Mock implementation of Agent2 for demonstration purposes
-        class MockAgent2(Agent2):
+        # Mock implementation of Agent for demonstration purposes
+        class MockAgent2(Agent):
             def __init__(self, name):
                 self.name = name
 
@@ -56,7 +56,7 @@ class Question(Message):
 
         # Create instances of MockAgent2
         agent1 = MockAgent2(name="Agent1")
-        agent2 = MockAgent2(name="Agent2")
+        agent2 = MockAgent2(name="Agent")
 
         # Create an instance of Question
         question = Question(agent1=agent1, agent2=agent2)
