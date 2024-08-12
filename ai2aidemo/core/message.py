@@ -21,7 +21,8 @@ class Message(BaseModel, ABC):
     @abstractmethod 
     def received_message(self):
         pass
-    
+from typing import List
+
 class Question(Message):
     """_summary_
 
@@ -41,9 +42,38 @@ class Question(Message):
             f"the topic: {topic} that combines your knowledge and his/her experiences."
         )
 
-    
-
-
         return self.agent1.inference(prompt)
+
+    @staticmethod
+    def use_case():
+        # Mock implementation of Agent2 for demonstration purposes
+        class MockAgent2(Agent2):
+            def __init__(self, name):
+                self.name = name
+
+            def inference(self, prompt):
+                return f"Mock response to: {prompt}"
+
+        # Create instances of MockAgent2
+        agent1 = MockAgent2(name="Agent1")
+        agent2 = MockAgent2(name="Agent2")
+
+        # Create an instance of Question
+        question = Question(agent1=agent1, agent2=agent2)
+
+        # Define a topic and context
+        topic = "Artificial Intelligence"
+        context = [
+            "AI is a branch of computer science.",
+            "It involves the creation of intelligent agents.",
+            "These agents can perform tasks that typically require human intelligence.",
+            "The last message in the context."
+        ]
+
+        # Use the send_message method to generate a question
+        generated_question = question.send_message(topic=topic, context=context)
+
+        # Print the generated question
+        print(generated_question)
     
     
