@@ -1,12 +1,17 @@
 from agent2 import Agent2
 from abc import ABC, abstractmethod
+from pydantic import BaseModel
+from typing import List
 
 
-class Message(ABC):
+class Message(BaseModel, ABC):
     """
     It takes three parameters: agent1 resumes, agent2 resumes, context, topics
     """
-    def __init__(self, agent1,agent2):
+    agent1: Agent2
+    agent2: Agent2
+
+    def __init__(self, agent1: Agent2, agent2: Agent2):
         self.agent1 = agent1
         self.agent2 = agent2
     @abstractmethod
@@ -23,13 +28,18 @@ class Question(Message):
     Args:
         ABC (_type_): _description_
     """
-    def __init__(self, agent1, agent2):
-        super().__init__(agent1, agent2, context, topics)
+    def __init__(self, agent1: Agent2, agent2: Agent2):
+        super().__init__(agent1=agent1, agent2=agent2)
     
-    def send_message(self,topic:str,context: List):
+    def send_message(self, topic: str, context: List[str]):
         last_message = context[-1]
     
-        prompt = f""" the agent: {self.agent2.name} here is the last message from {self.agent2.name} and the context: {context[:-1].join("/n")}  Your task now is to give a question about the topic: {topic} that combines your knowledge and his/her experiences"""
+        context_str = "\n".join(context[:-1])
+        prompt = (
+            f"Agent {self.agent2.name}, here is the last message from {self.agent2.name} "
+            f"and the context: {context_str}. Your task now is to give a question about "
+            f"the topic: {topic} that combines your knowledge and his/her experiences."
+        )
 
     
 
