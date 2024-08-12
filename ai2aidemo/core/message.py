@@ -10,6 +10,7 @@ class Message(abs, ABC):
     """
     def __init__(self, agent1,agent2, context, topics):
         pass 
-    def
-    
+    @abstractmethod
+    def send_message(self):
+        pass
     
