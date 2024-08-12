@@ -46,6 +46,10 @@ class Question(Message):
 
         return self.agent1.inference(prompt)
 
+    def received_message(self):
+        # Mock implementation for demonstration purposes
+        return "This is a mock received message."
+
     @staticmethod
     def use_case():
         # Mock implementation of Agent for demonstration purposes
