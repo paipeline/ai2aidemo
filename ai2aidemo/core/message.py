@@ -77,3 +77,5 @@ class Question(Message):
         print(generated_question)
     
     
+if __name__ == "__main__":
+    Question.use_case()
