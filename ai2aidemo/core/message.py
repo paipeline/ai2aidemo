@@ -1,9 +1,10 @@
 from agent2 import Agent2
 from abs import abs
+from abc import ABC, abstractmethod
 
 
 @
-class Message(abs):
+class Message(abs, ABC):
     """
     It takes three parameters: agent1 resumes, agent2 resumes, context, topics
     """
