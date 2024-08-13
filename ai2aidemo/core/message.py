@@ -1,8 +1,12 @@
 from agent2 import Agent
+import logging
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
 from typing import List
 
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class Message(BaseModel, ABC):
     class Config:
@@ -31,6 +35,7 @@ class Question(Message):
         """
             send question
         """
+        logging.debug(f"Sending message with topic: {topic} and context: {context}")
         # separate the context and the last message
         last_message = context[-1]
 
@@ -41,11 +46,15 @@ class Question(Message):
             f"the topic: {topic} that combines your knowledge and his/her experiences."
         )
 
-        return self.agent1.inference(prompt)
+        result = self.agent1.inference(prompt)
+        logging.debug(f"Generated question: {result}")
+        return result
 
     def received_message(self):
         # Mock implementation for demonstration purposes
-        return "This is a mock received message."
+        message = "This is a mock received message."
+        logging.debug(f"Received message: {message}")
+        return message
 
 
     
