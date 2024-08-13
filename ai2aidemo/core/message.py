@@ -12,9 +12,6 @@ class Message(BaseModel, ABC):
     """
     agent1: Agent
     agent2: Agent
-
-    agent1: Agent
-    agent2: Agent
     @abstractmethod
     def send_message(self,topic,context):
         pass
@@ -22,7 +19,6 @@ class Message(BaseModel, ABC):
     @abstractmethod 
     def received_message(self):
         pass
-from typing import List
 
 class Question(Message):
     """_summary_
@@ -32,8 +28,12 @@ class Question(Message):
     """
     
     def send_message(self, topic: str, context: List[str]):
+        """
+            send question
+        """
+        # separate the context and the last message
         last_message = context[-1]
-    
+
         context_str = "\n".join(context[:-1])
         prompt = (
             f"Agent {self.agent2.name}, here is the last message from {self.agent2.name} "
@@ -48,18 +48,11 @@ class Question(Message):
         return "This is a mock received message."
 
     @staticmethod
-    def use_case():
-        # Mock implementation of Agent for demonstration purposes
-        class MockAgent2(Agent):
-            def __init__(self, name):
-                self.name = name
-
-            def inference(self, prompt):
-                return f"Mock response to: {prompt}"
+    def use_case(agent1,agent2):
 
         # Create instances of MockAgent2
-        agent1 = MockAgent2(name="Agent1")
-        agent2 = MockAgent2(name="Agent")
+        agent1 = Agent(resume1)
+        agent2 = Agent(resume2)
 
         # Create an instance of Question
         question = Question(agent1=agent1, agent2=agent2)
@@ -80,5 +73,7 @@ class Question(Message):
         print(generated_question)
     
     
-if __name__ == "__main__":
+if __name__ == "__main__":    
+        
+        
     Question.use_case()
