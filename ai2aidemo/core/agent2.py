@@ -98,10 +98,10 @@ class Agent:
         """
         try:
             resume_json = ResumeJson(**resume)
-            print("Resume is valid and matches the ResumeJson format.")
+            logging.debug("Resume is valid and matches the ResumeJson format.")
             return resume_json
         except ValidationError as e:
-            print("Resume validation failed. Errors:", e.errors())
+            logging.debug(f"Resume validation failed. Errors: {e.errors()}")
             raise
 
 
@@ -222,7 +222,7 @@ class Agent:
                 {"role": "user", "content": prompt}
             ]
         )
-        print("inference...")
+        logging.debug("inference...")
         #TODO catch out of maxtoken.
         return response.choices[0].message.content
 
@@ -257,5 +257,5 @@ if __name__ == '__main__':
     }
 
     agent = Agent(resume=resume)
-    print(agent.get_name())  # Output: Pai Eng
+    logging.debug(f"Agent name: {agent.get_name()}")  # Output: Pai Eng
     print(agent.get_insight())
