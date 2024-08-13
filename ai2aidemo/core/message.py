@@ -47,33 +47,4 @@ class Question(Message):
         # Mock implementation for demonstration purposes
         return "This is a mock received message."
 
-    @staticmethod
-    def use_case(agent1,agent2):
-
-        # Create instances of MockAgent2
-        agent1 = Agent(resume1)
-        agent2 = Agent(resume2)
-
-        # Create an instance of Question
-        question = Question(agent1=agent1, agent2=agent2)
-
-        # Define a topic and context
-        topic = "Artificial Intelligence"
-        context = [
-            "AI is a branch of computer science.",
-            "It involves the creation of intelligent agents.",
-            "These agents can perform tasks that typically require human intelligence.",
-            "The last message in the context."
-        ]
-
-        # Use the send_message method to generate a question
-        generated_question = question.send_message(topic=topic, context=context)
-
-        # Print the generated question
-        print(generated_question)
-    
-    
-if __name__ == "__main__":    
-        
-        
-    Question.use_case()
+    use_case()
