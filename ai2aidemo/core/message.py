@@ -47,4 +47,64 @@ class Question(Message):
         # Mock implementation for demonstration purposes
         return "This is a mock received message."
 
-    use_case()
+
+    
+    
+if __name__ == "__main__":    
+    resume1 = {
+        "name": "Pai Eng",
+        "education": {
+            "degree": "Bachelor of Science",
+            "major": "Computer Science",
+            "university": "University of Barcelona"
+        },
+        "experience": "Software Engineer with 5 years of experience in AI and ML projects.",
+        "skills": ["Python", "Machine Learning", "Deep Learning", "Data Science"],
+        "projects": [
+            "Developed an AI-based recommendation system for e-commerce platforms.",
+            "Led a team in the creation of a machine learning model for predictive analytics in finance."
+        ],
+        "others": ["Certified AI Professional", "Published research papers"]
+    }
+
+
+
+
+    resume2 = {
+        "name": "Alex Martinez",
+        "education": {
+            "degree": "Bachelor of Engineering",
+            "major": "Software Engineering",
+            "university": "Polytechnic University of Valencia"
+        },
+        "experience": "Software Developer with 5 years of experience in AI and ML applications.",
+        "skills": ["Java", "Artificial Intelligence", "Neural Networks", "Data Engineering"],
+        "projects": [
+            "Created an AI-powered chatbot for customer service automation.",
+            "Spearheaded the development of a neural network model for real-time image recognition."
+        ],
+        "others": ["Certified Machine Learning Specialist", "Authored multiple technical articles"]
+    }
+
+
+                                                                                                                                                                                        
+    agent1 = Agent(resume1)                                                                                                                                                                                                    
+    agent2 = Agent(resume2)                                                                                                                                                                                                    
+                                                                                                                                                                                                                            
+    # Create an instance of Question                                                                                                                                                                                           
+    question = Question(agent1=agent1, agent2=agent2)                                                                                                                                                                          
+                                                                                                                                                                                                                            
+    # Define a topic and context                                                                                                                                                                                               
+    topic = "Artificial Intelligence"                                                                                                                                                                                          
+    context = [                                                                                                                                                                                                                
+        "AI is a branch of computer science.",                                                                                                                                                                                 
+        "It involves the creation of intelligent agents.",                                                                                                                                                                     
+        "These agents can perform tasks that typically require human intelligence.",                                                                                                                                           
+        "The last message in the context."                                                                                                                                                                                     
+    ]                                                                                                                                                                                                                          
+    print(context)                                                                                                                                                                                  
+    # Use the send_message method to generate a question                                                                                                                                                                       
+    generated_question = question.send_message(topic=topic, context=context)                                                                                                                                                   
+                                                                                                                                                                                                                            
+    # Print the generated question                                                                                                                                                                                             
+    print(generated_question
