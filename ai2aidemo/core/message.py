@@ -115,5 +115,6 @@ if __name__ == "__main__":
     # Use the send_message method to generate a question                                                                                                                                                                       
     generated_question = question.send_message(topic=topic, context=context)                                                                                                                                                   
                                                                                                                                                                                                                             
-    # Print the generated question                                                                                                                                                                                             
-    print(generated_question
+    # Print the generated question                                                                                                                                                           
+    logging.debug(f"Generated question in mock:{generated_question}")                                                                                                                                                                                 
+    print(generated_question)
