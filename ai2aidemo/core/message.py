@@ -116,10 +116,10 @@ if __name__ == "__main__":
         "These agents can perform tasks that typically require human intelligence.",                                                                                                                                           
         "The last message in the context."                                                                                                                                                                                     
     ]                                                                                                                                                                                                                          
-    print(context)                                                                                                                                                                                  
+    logging.debug(f"Context: {context}")
     # Use the send_message method to generate a question                                                                                                                                                                       
     generated_question = question.send_message(topic=topic, context=context)                                                                                                                                                   
                                                                                                                                                                                                                             
     # Print the generated question                                                                                                                                                           
     logging.debug(f"Generated question in mock:{generated_question}")                                                                                                                                                                                 
-    print(generated_question)
+    logging.debug(f"Generated question in use_case: {generated_question}")
