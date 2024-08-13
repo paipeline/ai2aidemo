@@ -1,9 +1,13 @@
 from agent2 import Agent
 import logging
+import logging
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
 from typing import List
 
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -35,6 +39,7 @@ class Question(Message):
         """
             send question
         """
+        logging.debug(f"Sending message with topic: {topic} and context: {context}")
         logging.debug(f"Sending message with topic: {topic} and context: {context}")
         # separate the context and the last message
         last_message = context[-1]
