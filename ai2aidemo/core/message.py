@@ -1,4 +1,4 @@
-from agent2 import Agent
+from agent import Agent
 import logging
 import logging
 from abc import ABC, abstractmethod
@@ -9,8 +9,6 @@ from typing import List
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class Message(BaseModel, ABC):
     class Config:
@@ -25,7 +23,7 @@ class Message(BaseModel, ABC):
         pass
     
     @abstractmethod 
-    def received_message(self):
+    def received_message(self,message):
         pass
 
 class Question(Message):
@@ -40,33 +38,58 @@ class Question(Message):
             send question
         """
         logging.debug(f"Sending message with topic: {topic} and context: {context}")
-        logging.debug(f"Sending message with topic: {topic} and context: {context}")
         # separate the context and the last message
         last_message = context[-1]
-
         context_str = "\n".join(context[:-1])
         prompt = (
-            f"Agent {self.agent2.name}, here is the last message from {self.agent2.name} "
-            f"and the context: {context_str}. Your task now is to give a question about "
-            f"the topic: {topic} that combines your knowledge and his/her experiences."
+            f"""Here is the last message {last_message} from {self.agent2.name} and the previous conversation: {context_str}. You need to give a question about 
+            the topic: {topic} that combines your knowledge, his/her experiences and the last message given"""
         )
 
         result = self.agent1.inference(prompt)
         logging.debug(f"Generated question: {result}")
         return result
 
-    def received_message(self):
+    def received_message(self,message):
+        # Mock implementation for demonstration purposes
+        message = "This is a mock received message."
+        logging.debug(f"Received message: {message}")
+        return message
+
+class Response(Message):
+    """_summary_
+
+    Args:
+        ABC (_type_): _description_
+    """
+    
+    def send_message(self,topic:str, context: List[str]):
+        """
+            send question
+        """
+        logging.debug(f"Sending RESPONSE with topic: {topic} and context: {context}")
+        # separate the context and the last message
+        last_message = context[-1] # could be either question or another response
+        context_str = "\n".join(context[:-1])
+        prompt = (
+            f"""Here is the last message {last_message} from {self.agent2.name} and the previous conversation: {context_str}. You need to give a response about 
+            the last message that combines your knowledge, his/her experiences and the last message given"""
+        )
+        result = self.agent1.inference(prompt)
+        logging.debug(f"Generated question: {result}")
+        return result
+
+    def received_message(self,message):
         # Mock implementation for demonstration purposes
         message = "This is a mock received message."
         logging.debug(f"Received message: {message}")
         return message
 
 
-    
-    
+
 if __name__ == "__main__":    
     resume1 = {
-        "name": "Pai Eng",
+        "name": "Lucia Eng",
         "education": {
             "degree": "Bachelor of Science",
             "major": "Computer Science",
@@ -100,8 +123,8 @@ if __name__ == "__main__":
         "others": ["Certified Machine Learning Specialist", "Authored multiple technical articles"]
     }
 
-
-                                                                                                                                                                                        
+    ################################################
+    ########### mock 1 cycle conversation ##########                                                                                              
     agent1 = Agent(resume1)                                                                                                                                                                                                    
     agent2 = Agent(resume2)                                                                                                                                                                                                    
                                                                                                                                                                                                                             
@@ -123,3 +146,15 @@ if __name__ == "__main__":
     # Print the generated question                                                                                                                                                           
     logging.debug(f"Generated question in mock:{generated_question}")                                                                                                                                                                                 
     logging.debug(f"Generated question in use_case: {generated_question}")
+    context.append(generated_question)                                                                                                                                                                          
+    print(context)                                                                                                                                        
+    # Create an instance of Question                                                                                                                                                                                           
+    response = Response(agent1=agent1, agent2=agent2)                                                                                                                                                                          
+
+    logging.debug(f"Context: {context}")
+    # Use the send_message method to generate a question                                                                                                                                                                       
+    generated_response = response.send_message(topic=topic, context=context)                                                                                                                                                   
+                                                                                                                                                                                                                            
+    # Print the generated response                                                                                                                                                           
+    logging.debug(f"Generated response in mock:{generated_response}")                                                                                                                                                                                 
+    logging.debug(f"Generated response in use_case: {generated_response}")
