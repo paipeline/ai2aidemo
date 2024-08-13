@@ -7,7 +7,14 @@ from typing import List
 
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("conversation.log"),
+        logging.StreamHandler()
+    ]
+)
 
 
 class Message(BaseModel, ABC):
