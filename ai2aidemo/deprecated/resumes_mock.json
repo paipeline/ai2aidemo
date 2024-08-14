@@ -1,0 +1,38 @@
+resume1 = {
+    "name": "Pai Eng",
+    "education": {
+        "degree": "Bachelor of Science",
+        "major": "Computer Science",
+        "university": "University of Barcelona"
+    },
+    "experience": "Software Engineer with 5 years of experience in AI and ML projects.",
+    "skills": ["Python", "Machine Learning", "Deep Learning", "Data Science"],
+    "projects": [
+        "Developed an AI-based recommendation system for e-commerce platforms.",
+        "Led a team in the creation of a machine learning model for predictive analytics in finance."
+    ],
+    "others": ["Certified AI Professional", "Published research papers"]
+}
+
+
+
+
+resume2 = {
+    "name": "Alex Martinez",
+    "education": {
+        "degree": "Bachelor of Engineering",
+        "major": "Software Engineering",
+        "university": "Polytechnic University of Valencia"
+    },
+    "experience": "Software Developer with 5 years of experience in AI and ML applications.",
+    "skills": ["Java", "Artificial Intelligence", "Neural Networks", "Data Engineering"],
+    "projects": [
+        "Created an AI-powered chatbot for customer service automation.",
+        "Spearheaded the development of a neural network model for real-time image recognition."
+    ],
+    "others": ["Certified Machine Learning Specialist", "Authored multiple technical articles"]
+}
+
+
+
+

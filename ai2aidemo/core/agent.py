@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ValidationError
 from openai import OpenAI
 import json
+import logging
 class ResumeJson(BaseModel):
     name: str
     education: dict
@@ -36,7 +37,7 @@ class Agent:
     _check_resume_json(resume: dict) -> ResumeJson
         Validates the resume against the ResumeJson structure.
     
-    get_insight(resume: dict) -> dict
+    get_enhanced(resume: dict) -> dict
         Extracts relevant knowledge from the resume and updates the knowledge attribute.
     
     inference(prompt: str) -> str
@@ -62,10 +63,11 @@ class Agent:
         self.conversation_history = []  # Stores the history of the conversation as a list of strings
     
         #TODO v1 wrap the initialization of agent with method: load_from_database()
-        self.resume_json = self._check_resume_json(resume)  # Validate and store the resume in ResumeJson format
-        self.name = self.resume_json.name  # Extract the name from the validated resume
-        self.knowledge = self.get_insight()  # Extracted knowledge from the resume, also stored as a dictionary
-    
+        self.resume = self._check_resume_json(resume)  # Validate and store the resume in json format
+        self.name = self.resume.name  # Extract the name from the validated resume
+        self.enhanced_resume = self.get_enhanced()  # Extracted knowledge from the resume, also stored as a dictionary
+        
+        print(self.enhanced_resume)
     def get_name(self) -> str:
         """
         Returns the name of the agent.
@@ -106,7 +108,7 @@ class Agent:
 
 
 
-    def get_insight(self) -> dict:
+    def get_enhanced(self) -> dict:
         """
         Extracts relevant knowledge and insights from the resume and updates the knowledge attribute.
 
@@ -120,7 +122,7 @@ class Agent:
         insights = {}
 
         # Extract project descriptions from the resume
-        projects = self.resume_json.projects if hasattr(self.resume_json, 'projects') else []
+        projects = self.resume.projects if hasattr(self.resume, 'projects') else []
         detailed_projects = []
         
         if projects:
@@ -144,7 +146,7 @@ class Agent:
             insights["detailed_projects"] = detailed_projects
 
         # Generate insights about skills
-        skills = self.resume_json.skills if hasattr(self.resume_json, 'skills') else []
+        skills = self.resume.skills if hasattr(self.resume, 'skills') else []
         if skills:
             prompt = f"Given the following skills: {', '.join(skills)}, what does this say about the individual's expertise and areas of specialization? What kind of roles or tasks would they excel in? Summarize in one paragraph."
             
@@ -159,7 +161,7 @@ class Agent:
             insights["skills_insight"] = response.choices[0].message.content
 
         # Generate insights about experience
-        experience = self.resume_json.experience if hasattr(self.resume_json, 'experience') else ""
+        experience = self.resume.experience if hasattr(self.resume, 'experience') else ""
         if experience:
             prompt = f"Based on the following experience: {experience}, what can you infer about this individual's strengths, leadership abilities, and potential career trajectory? Summarize in one paragraph"
             
@@ -174,7 +176,7 @@ class Agent:
             insights["experience_insight"] = response.choices[0].message.content
 
         # Generate insights about education
-        education = self.resume_json.education if hasattr(self.resume_json, 'education') else {}
+        education = self.resume.education if hasattr(self.resume, 'education') else {}
         if education:
             education_details = ', '.join([f"{key}: {value}" for key, value in education.items()])
             prompt = f"Considering the following education background: {education_details}, what academic strengths or areas of expertise does this individual likely have?"
@@ -190,7 +192,7 @@ class Agent:
             insights["education_insight"] = response.choices[0].message.content
 
         # Combine the original resume with the newly generated insights
-        enhanced_resume = {**self.resume_json.dict(), **insights}
+        enhanced_resume = {**self.resume.dict(), **insights}
         
         # Return the enhanced resume with detailed project information and additional insights
         return enhanced_resume
@@ -211,8 +213,8 @@ class Agent:
             The generated response.
         """
         client = OpenAI()
-        system_prompt = f"""You are role playing{{self.name}} and networking with another amigable person.
-        Here is your resume information: {json.dumps(self.knowledge, indent=4)}.
+        system_prompt = f"""You are role playing {self.name} and networking with another amigable person.
+        Here is your resume information: {json.dumps(self.enhanced_resume, indent=4)}.
         Respond at best of your ability combining the resume knowledge, your personal experience and the domain knowledge to give a thoughtful response.
         """
         response = client.chat.completions.create(
@@ -235,8 +237,7 @@ class Agent:
         new_info : dict
             New information to be added to the agent's knowledge.
         """
-        self.knowledge.update(new_info)
-
+        self.enhanced.update(new_info)
 
 # Example usage
 if __name__ == '__main__':
@@ -258,4 +259,6 @@ if __name__ == '__main__':
 
     agent = Agent(resume=resume)
     logging.debug(f"Agent name: {agent.get_name()}")  # Output: Pai Eng
-    print(agent.get_insight())
+    logging.info(f"Agent resume: {agent.resume}")
+    logging.debug(agent.get_enhanced())
+
