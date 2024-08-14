@@ -2,13 +2,14 @@ from pydantic import BaseModel, ValidationError
 from openai import OpenAI
 import json
 import logging
-class ResumeJson(BaseModel):
-    name: str
-    education: dict
-    experience: str
-    skills: list[str]
-    others: list[str]
+from typing import Dict, List, Union, Any
 
+class ResumeJson(BaseModel):
+    name: Any
+    education: Any
+    experience: Any
+    skills: Any
+    others: Any
 class Agent:
     """
     The Agent class represents an individual entity capable of engaging in conversations,
@@ -176,10 +177,9 @@ class Agent:
             insights["experience_insight"] = response.choices[0].message.content
 
         # Generate insights about education
-        education = self.resume.education if hasattr(self.resume, 'education') else {}
+        education = self.resume.education if hasattr(self.resume, 'education') else ""
         if education:
-            education_details = ', '.join([f"{key}: {value}" for key, value in education.items()])
-            prompt = f"Considering the following education background: {education_details}, what academic strengths or areas of expertise does this individual likely have?"
+            prompt = f"Considering the following education background: {education}, what academic strengths or areas of expertise does this individual likely have?"
             
             response = client.chat.completions.create(
                 model="gpt-4o-mini", 
@@ -213,10 +213,11 @@ class Agent:
             The generated response.
         """
         client = OpenAI()
-        system_prompt = f"""You are role playing {self.name} and networking with another amigable person.
+        system_prompt = f"""You are role-playing {self.name} and engaging in a networking conversation with another friendly person.
         Here is your resume information: {json.dumps(self.enhanced_resume, indent=4)}.
-        Respond at best of your ability combining the resume knowledge, your personal experience and the domain knowledge to give a thoughtful response.
-        """
+        Respond to questions and messages to the best of your ability and be descriptive. Avoid using information not provided, use only the knowledge and experience explicitly stated in your resume. If asked for insights or opinions, clearly state that it is an hearsay. 
+        Do not claim credit for anything that is not documented in your resume. If you don't have direct experience with a topic, acknowledge it and say it aloud, and to fill the gap you can provide a career hearsay."""
+
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[

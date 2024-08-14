@@ -4170,3 +4170,100 @@ httpx.ConnectTimeout: _ssl.c:989: The handshake operation timed out
 2024-08-14 09:15:35,336 - INFO - Generated response: Absolutely, Alex! One major challenge I've faced is dealing with data quality—noisy datasets can really derail model performance. Implementing rigorous preprocessing and continuous validation helped, but it's a constant battle. Looking ahead, I’m exploring transfer learning to leverage existing models, which could save time while improving accuracy. It’s exciting to see how much we can achieve when we tackle these real-world issues head-on!
 2024-08-14 09:15:35,430 - DEBUG - close.started
 2024-08-14 09:15:35,432 - DEBUG - close.complete
+2024-08-14 14:06:39,518 Starting new HTTPS connection (1): huggingface.co:443
+2024-08-14 14:06:40,085 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/tokenizer_config.json HTTP/11" 200 0
+2024-08-14 14:06:40,156 Loading model from cache...
+2024-08-14 14:06:40,563 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/config.json HTTP/11" 200 0
+2024-08-14 14:06:40,858 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/config.json HTTP/11" 200 0
+2024-08-14 15:21:51,226 Starting new HTTPS connection (1): huggingface.co:443
+2024-08-14 15:21:51,786 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/tokenizer_config.json HTTP/11" 200 0
+2024-08-14 15:21:51,879 Loading model from cache...
+2024-08-14 15:21:52,347 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/config.json HTTP/11" 200 0
+2024-08-14 15:21:52,655 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/config.json HTTP/11" 200 0
+2024-08-14 15:27:00,716 Starting new HTTPS connection (1): huggingface.co:443
+2024-08-14 15:27:01,234 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/tokenizer_config.json HTTP/11" 200 0
+2024-08-14 15:27:01,509 Loading model from cache...
+2024-08-14 15:27:01,760 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/config.json HTTP/11" 200 0
+2024-08-14 15:27:02,011 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/config.json HTTP/11" 200 0
+2024-08-14 15:46:42,635 Starting new HTTPS connection (1): huggingface.co:443
+2024-08-14 15:46:43,271 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/tokenizer_config.json HTTP/11" 200 0
+2024-08-14 15:46:43,485 Loading model from cache...
+2024-08-14 15:46:43,740 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/config.json HTTP/11" 200 0
+2024-08-14 15:46:44,001 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/config.json HTTP/11" 200 0
+2024-08-14 15:47:06,912 Generated normalized embeddings for text: BERT-large is a deep learning model introduced by ...
+2024-08-14 15:47:09,194 Generated normalized embeddings for text: BERT-large is really big... it has 24-layers and a...
+2024-08-14 15:47:09,239 Computed BERT score: Precision=0.8856022357940674, Recall=0.8860691785812378, F1 Score=0.8858356475830078
+2024-08-14 15:47:09,240 Final relevance score (BERTScore F1): 0.8858356475830078
+2024-08-14 15:47:09,240 Relevance 1: {'bert_score': {'precision': 0.8856022357940674, 'recall': 0.8860691785812378, 'f1_score': 0.8858356475830078}, 'final_relevance_score': 0.8858356475830078}
+2024-08-14 15:47:12,162 Generated normalized embeddings for text: {
+    "name": "Alex Martinez",
+    "education": {
+...
+2024-08-14 15:47:13,530 Generated normalized embeddings for text: BERT-large is really big... it has 24-layers and a...
+2024-08-14 15:47:13,535 Computed BERT score: Precision=0.8634516596794128, Recall=0.8491434454917908, F1 Score=0.8562377691268921
+2024-08-14 15:47:13,536 Final relevance score (BERTScore F1): 0.8562377691268921
+2024-08-14 15:47:13,536 Relevance 2: {'bert_score': {'precision': 0.8634516596794128, 'recall': 0.8491434454917908, 'f1_score': 0.8562377691268921}, 'final_relevance_score': 0.8562377691268921}
+2024-08-14 15:49:04,029 Starting new HTTPS connection (1): huggingface.co:443
+2024-08-14 15:49:04,535 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/tokenizer_config.json HTTP/11" 200 0
+2024-08-14 15:49:04,782 Loading model from cache...
+2024-08-14 15:49:05,044 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/config.json HTTP/11" 200 0
+2024-08-14 15:49:05,362 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/config.json HTTP/11" 200 0
+2024-08-14 15:49:21,512 Generated normalized embeddings for text: BERT-large is a deep learning model introduced by ...
+2024-08-14 15:49:24,606 Generated normalized embeddings for text: Absolutely! I believe advancements in transformer ...
+2024-08-14 15:49:24,647 Computed BERT score: Precision=0.8911502957344055, Recall=0.8782793879508972, F1 Score=0.8846680521965027
+2024-08-14 15:49:24,647 Final relevance score (BERTScore F1): 0.8846680521965027
+2024-08-14 15:49:24,648 Relevance 1: {'bert_score': {'precision': 0.8911502957344055, 'recall': 0.8782793879508972, 'f1_score': 0.8846680521965027}, 'final_relevance_score': 0.8846680521965027}
+2024-08-14 15:49:28,322 Generated normalized embeddings for text: {
+    "name": "Alex Martinez",
+    "education": {
+...
+2024-08-14 15:49:31,790 Generated normalized embeddings for text: Absolutely! I believe advancements in transformer ...
+2024-08-14 15:49:31,811 Computed BERT score: Precision=0.8560229539871216, Recall=0.8345516920089722, F1 Score=0.8451509475708008
+2024-08-14 15:49:31,816 Final relevance score (BERTScore F1): 0.8451509475708008
+2024-08-14 15:49:31,818 Relevance 2: {'bert_score': {'precision': 0.8560229539871216, 'recall': 0.8345516920089722, 'f1_score': 0.8451509475708008}, 'final_relevance_score': 0.8451509475708008}
+2024-08-14 15:52:16,891 Starting new HTTPS connection (1): huggingface.co:443
+2024-08-14 15:52:21,572 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/tokenizer_config.json HTTP/11" 200 0
+2024-08-14 15:52:21,902 Loading model from cache...
+2024-08-14 15:52:22,231 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/config.json HTTP/11" 200 0
+2024-08-14 15:52:22,540 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/config.json HTTP/11" 200 0
+2024-08-14 15:52:39,520 Generated normalized embeddings for text: BERT-large is a deep learning model introduced by ...
+2024-08-14 15:52:43,311 Generated normalized embeddings for text: Ive found that implementing the **Adapter Pattern*...
+2024-08-14 15:52:43,347 Computed BERT score: Precision=0.9213059544563293, Recall=0.9157204627990723, F1 Score=0.9185047149658203
+2024-08-14 15:52:43,348 Final relevance score (BERTScore F1): 0.9185047149658203
+2024-08-14 15:52:43,348 Relevance 1: {'bert_score': {'precision': 0.9213059544563293, 'recall': 0.9157204627990723, 'f1_score': 0.9185047149658203}, 'final_relevance_score': 0.9185047149658203}
+2024-08-14 15:52:48,358 Generated normalized embeddings for text: {
+    "name": "Pai Eng",
+    "education": {
+      ...
+2024-08-14 15:52:52,982 Generated normalized embeddings for text: Ive found that implementing the **Adapter Pattern*...
+2024-08-14 15:52:53,023 Computed BERT score: Precision=0.8879585862159729, Recall=0.8658437132835388, F1 Score=0.8767616748809814
+2024-08-14 15:52:53,023 Final relevance score (BERTScore F1): 0.8767616748809814
+2024-08-14 15:52:53,023 Relevance 2: {'bert_score': {'precision': 0.8879585862159729, 'recall': 0.8658437132835388, 'f1_score': 0.8767616748809814}, 'final_relevance_score': 0.8767616748809814}
+2024-08-14 16:00:52,779 Starting new HTTPS connection (1): huggingface.co:443
+2024-08-14 16:00:53,317 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/tokenizer_config.json HTTP/11" 200 0
+2024-08-14 16:00:53,415 Loading model from cache...
+2024-08-14 16:00:53,667 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/config.json HTTP/11" 200 0
+2024-08-14 16:00:53,954 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/config.json HTTP/11" 200 0
+2024-08-14 16:01:10,982 Generated normalized embeddings for text: BERT-large is a deep learning model introduced by ...
+2024-08-14 16:01:14,499 Generated normalized embeddings for text: Ive found that implementing the **Adapter Pattern*...
+2024-08-14 16:01:14,576 Computed BERT score: Precision=0.9213059544563293, Recall=0.9157204627990723, F1 Score=0.9185047149658203
+2024-08-14 16:01:14,576 Final relevance score (BERTScore F1): 0.9185047149658203
+2024-08-14 16:01:14,576 Relevance 1: {'bert_score': {'precision': 0.9213059544563293, 'recall': 0.9157204627990723, 'f1_score': 0.9185047149658203}, 'final_relevance_score': 0.9185047149658203}
+2024-08-14 16:01:27,163 Starting new HTTPS connection (1): huggingface.co:443
+2024-08-14 16:01:27,709 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/tokenizer_config.json HTTP/11" 200 0
+2024-08-14 16:01:27,980 Loading model from cache...
+2024-08-14 16:01:28,246 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/config.json HTTP/11" 200 0
+2024-08-14 16:01:28,555 https://huggingface.co:443 "HEAD /bert-large-uncased-whole-word-masking-finetuned-squad/resolve/main/config.json HTTP/11" 200 0
+2024-08-14 16:01:57,321 Generated normalized embeddings for text: BERT-large is a deep learning model introduced by ...
+2024-08-14 16:02:05,097 Generated normalized embeddings for text: Ive found that implementing the **Adapter Pattern*...
+2024-08-14 16:02:05,336 Computed BERT score: Precision=0.9213059544563293, Recall=0.9157204627990723, F1 Score=0.9185047149658203
+2024-08-14 16:02:05,336 Final relevance score (BERTScore F1): 0.9185047149658203
+2024-08-14 16:02:05,337 Relevance 1: {'bert_score': {'precision': 0.9213059544563293, 'recall': 0.9157204627990723, 'f1_score': 0.9185047149658203}, 'final_relevance_score': 0.9185047149658203}
+2024-08-14 16:02:14,821 Generated normalized embeddings for text: {
+    "name": "Chong Chen",
+    "contact": {
+     ...
+2024-08-14 16:02:20,281 Generated normalized embeddings for text: Ive found that implementing the **Adapter Pattern*...
+2024-08-14 16:02:20,290 Computed BERT score: Precision=0.8297874331474304, Recall=0.7908207178115845, F1 Score=0.80983567237854
+2024-08-14 16:02:20,291 Final relevance score (BERTScore F1): 0.80983567237854
+2024-08-14 16:02:20,291 Relevance 2: {'bert_score': {'precision': 0.8297874331474304, 'recall': 0.7908207178115845, 'f1_score': 0.80983567237854}, 'final_relevance_score': 0.80983567237854}

@@ -102,7 +102,7 @@ class Question(Message):
             Reflect on the conversation history and the resume analysis, and generate a question about the topic "{topic}" that combines your knowledge, his experiences, and the last message given.
 
             example questions:
-            "With all the cool new AI toys out there, how have you managed to keep the wheels turning smoothly in your projects without pulling your hair out?"
+            Thanks for accepting my connection request, Jordan! I see that you have experience with AI-driven applications. I'm particularly interested in how AI is being integrated into software development processes. How has your experience been with this?
 
             format:
             Give only short, straightforward questions that make the conversation transition smoothly. Ensure the question is relevant to the topic and the last message given.
@@ -113,8 +113,8 @@ class Question(Message):
         )
 
         result = self.agent1.inference(prompt)
-        logging.info(f"Generated question: {result}")
-        info_logger.info(f"Generated question: {result}")  # Log to info.log
+        logging.info(f"Generated Question - {self.agent1.name}: {result}")
+        info_logger.info(f"Generated Question - {self.agent1.name}: {result}")  # Log to info.log
 
         # Combine the comment and the question
         final_response = f"{brief_comment} {result}"
@@ -126,8 +126,6 @@ class Question(Message):
         message = "This is a mock received message."
         logging.debug(f"Received message: {message}")
         return message
-
-
 
 
 
@@ -148,7 +146,7 @@ class Response(Message):
             Analyze the following resume: 
             {self.agent2.enhanced_resume}
             
-            Identify key skills, experiences, and achievements that are most relevant to the topic "{topic}".
+            Identify key skills, experiences, and achievements that are directly related to the topic "{topic}".
             """
         )
         resume_analysis = self.agent1.inference(resume_analysis_prompt)
@@ -160,13 +158,15 @@ class Response(Message):
             Analyze the following conversation history:
             {previous_conversation}
             
-            Identify the key themes, concerns, and the direction of the conversation.
+            Identify the key themes, concerns, and the direction of the conversation. Determine if the last message is a question or a comment.
             """
         )
         conversation_analysis = self.agent1.inference(conversation_analysis_prompt)
         logging.info(f"Conversation Analysis: {conversation_analysis}")
         
         # Step 3: Generate a Context-Aware Response
+        response_type = "answer the question directly" if "?" in last_message else "build upon the previous comment"
+        
         prompt = (
             f"""
             Using the following information:
@@ -175,22 +175,29 @@ class Response(Message):
             - Last Message: {last_message}
             
             task:
-            Reflect on the above information and generate a response to the last message that combines relevant knowledge, the individual's experiences from the resume, and the context from the conversation.
-            
+            - If the last message was a question, {response_type} by using relevant knowledge from the resume and the conversation context. 
+            Ensure your response is cohesive and flows naturally from the last message.
+
+                example: Yeah, I had some experiences with that, I believe AI will continue to integrate deeper into software development, particularly in areas like automated testing, code generation, and real-time analytics. The combination of AI and DevOps is something I’m really looking forward to exploring more.
+
+            - If the last message was a comment, {response_type} by adding new insights or valuable information that aligns with the individual's documented experiences. Make sure your comment connects smoothly to the previous point.
+
+                example: In addition, I think the use of AI in predictive analytics within DevOps could be a game changer. Imagine being able to foresee potential system bottlenecks or failures before they occur, allowing teams to address issues proactively rather than reactively. 
+
             format:
-            Provide a short response, focusing on experiences and insights that are highly relevant to the question asked and the last message. 
-            You may include career insights such as current trends, future exploration, or how it relates to the individual's background.
-            
+            Provide a short and direct response that is relevant to the last message. Stay concise and cohesive to the last message make it as a continuity, and do not infer any personal experiences not documented in the resume.
+            You may include relevant career, education insights or how the topic relates to the background.
+
             tone:
-            daily, not serious. You have greeted before, so don't greet.
+            Keep the tone casual and conversational, ensuring your response feels naturally connected to the last message.
 
             output limit:
-            response less than 100 words.
+            Respond in less than 70 words.
             """
         )
         result = self.agent1.inference(prompt)
-        logging.info(f"Generated response: {result}")
-        info_logger.info(f"Generated response: {result}")  # Log to info.log
+        logging.info(f"Generated Response - {self.agent1.name}: {result}")
+        info_logger.info(f"Generated Response - {self.agent1.name}: {result}")  # Log to info.log
         return result
 
     def received_message(self, message):
@@ -223,8 +230,8 @@ class Greeting(Message):
         )
         
         result = self.agent1.inference(prompt)
-        logging.info(f"Generated greeting: {result}")
-        info_logger.info(f"Generated greeting: {result}")  # Log to info.log
+        logging.info(f"Generated greeting - {self.agent1.name}: {result}")
+        info_logger.info(f"Generated greeting - {self.agent1.name}: {result}")  # Log to info.log
         return result
 
     def received_message(self, message):
