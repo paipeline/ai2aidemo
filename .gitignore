@@ -1,5 +1,5 @@
 .aider*
 .env
-.TODO
+TODO
 debug.log
-.bert_large_qa_model.pth
+bert_large_qa_model.pth
