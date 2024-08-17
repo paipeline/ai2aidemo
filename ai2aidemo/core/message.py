@@ -33,9 +33,10 @@ class Message(BaseModel, ABC):
     
     agent1: Agent
     agent2: Agent
+    userID: str
 
     @abstractmethod
-    def send_message(self, topic, conversation_history):
+    def send_message(self, topic, conversation_history, userID):
         pass
     
     @abstractmethod 
@@ -47,7 +48,7 @@ from typing import List
 
 
 class Question(Message):
-    def send_message(self, topic: str, conversation_history: List[str]):
+    def send_message(self, topic: str, conversation_history: List[str], userID: str):
         logging.debug(f"Sending message with topic: {topic} and conversation_history: {conversation_history}")
         
         if not conversation_history:
@@ -131,7 +132,7 @@ class Question(Message):
 
 
 class Response(Message):
-    def send_message(self, topic: str, conversation_history: List[str]):
+    def send_message(self, topic: str, conversation_history: List[str], userID: str):
         logging.debug(f"Sending RESPONSE with topic: {topic}, conversation_history: {conversation_history}")
         
         if not conversation_history:
@@ -209,7 +210,7 @@ class Response(Message):
 
 
 class Greeting(Message):
-    def send_message(self, topic):
+    def send_message(self, topic, userID):
         logging.debug(f"Sending GREETING with topic: {topic}")
         
         # Generate a greeting prompt based on agent's resume
@@ -285,7 +286,7 @@ if __name__ == "__main__":
     agent1 = Agent(resume1)
     agent2 = Agent(resume2)
     greeting = Greeting(agent1 =agent1, agent2=agent2)
-    generated_greeting = greeting.send_message(topic=topic)
+    generated_greeting = greeting.send_message(topic=topic, userID="123-456-7890")
     conversation_history.append(generated_greeting)
     
 
@@ -294,13 +295,13 @@ if __name__ == "__main__":
     #### Question ####
     question = Question(agent1=agent1, agent2=agent2)
     # Define a topic and conversation_history
-    generated_question = question.send_message(topic=topic, conversation_history=conversation_history)
+    generated_question = question.send_message(topic=topic, conversation_history=conversation_history, userID="123-456-7890")
     conversation_history.append(generated_question)
 
 
     #### Response ####
     response = Response(agent1=agent1, agent2=agent2)
-    generated_response = response.send_message(topic=topic, conversation_history=conversation_history)
+    generated_response = response.send_message(topic=topic, conversation_history=conversation_history, userID="123-456-7890")
 
 
 

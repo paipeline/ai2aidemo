@@ -62,7 +62,7 @@ class Flow:
         # Implement the logic for ending the conversation here
         pass
     
-    def exchange(self, exchange_class: Callable, topic: str, sender: Agent, receiver: Agent) -> str:
+    def exchange(self, exchange_class: Callable, topic: str, sender: Agent, receiver: Agent, userID: str) -> str:
         """
         Handles the conversation exchange between the two agents using the provided exchange class.
 
@@ -145,10 +145,10 @@ class Flow:
         """Executes the conversation flow."""
         self.topic = prob_based_pick(self.topic_lst) # eliminiate topic_lst inplace
         ## init ##
-        generated_greetings = self.exchange(Greeting,self.topic,self.agent1,self.agent2)
+        generated_greetings = self.exchange(Greeting, self.topic, self.agent1, self.agent2, userID="123-456-7890")
 
-        generated_question = self.exchange(Question, self.topic, self.agent1, self.agent2)
-        generated_response = self.exchange(Response,self.topic, self.agent2, self.agent1)
+        generated_question = self.exchange(Question, self.topic, self.agent1, self.agent2, userID="123-456-7890")
+        generated_response = self.exchange(Response, self.topic, self.agent2, self.agent1, userID="123-456-7890")
             
         for _ in range(6):
             if (len(self.sequence) % 2 == 1):
@@ -253,8 +253,8 @@ if __name__ == "__main__":
     #     "others": ["Certified Machine Learning Specialist", "Authored multiple technical articles"]
     # }
 
-    agent1 = Agent(resume1)
-    agent2 = Agent(resume2)
+    agent1 = Agent(resume1, userID="123-456-7890")
+    agent2 = Agent(resume2, userID="098-765-4321")
 
     flow = Flow(agent1=agent1, agent2=agent2)
     flow.iter()  # Execute the conversation flow

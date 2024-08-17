@@ -51,19 +51,21 @@ class Agent:
         Loads a new resume into the agent, updates the resume attribute, and refreshes the knowledge attribute.
     """
     
-    def __init__(self, resume: dict):#TODO v1 load in userId
+    def __init__(self, resume: dict, userID: str):
         """
-        Initializes the Agent with a resume. Extracts the name from the resume,
+        Initializes the Agent with a resume and userID. Extracts the name from the resume,
         and processes the resume to extract knowledge.
 
         Parameters:
         ----------
         resume : dict
             The resume information for the agent, passed as a dictionary.
+        userID : str
+            The user ID (phone number) for the agent.
         """
         self.conversation_history = []  # Stores the history of the conversation as a list of strings
+        self.userID = userID  # Store the user ID (phone number)
     
-        #TODO v1 wrap the initialization of agent with method: load_from_database()
         self.resume = self._check_resume_json(resume)  # Validate and store the resume in json format
         self.name = self.resume.name  # Extract the name from the validated resume
         self.enhanced_resume = self.get_enhanced()  # Extracted knowledge from the resume, also stored as a dictionary

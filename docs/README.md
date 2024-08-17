@@ -87,8 +87,8 @@ resume2 = {
 }
 
 # Initialize agents
-agent1 = Agent(resume1)
-agent2 = Agent(resume2)
+agent1 = Agent(resume1, userID="123-456-7890")
+agent2 = Agent(resume2, userID="098-765-4321")
 
 # Generate topics
 topics_generator = Topics(agent1_knowledge=agent1.enhanced_resume, agent2_knowledge=agent2.enhanced_resume)
