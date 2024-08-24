@@ -259,8 +259,8 @@ if __name__ == '__main__':
         ],
         "others": ["Certified AI Professional", "Published research papers"]
     }
-
-    agent = Agent(resume=resume)
+    phone = '608-471-2501'
+    agent = Agent(resume=resume,userID=phone)
     logging.debug(f"Agent name: {agent.get_name()}")  # Output: Pai Eng
     logging.info(f"Agent resume: {agent.resume}")
     logging.debug(agent.get_enhanced())

@@ -12,10 +12,10 @@ from ai2aidemo.utils.pick_strategy import prob_based_pick
 import random
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,  # Keep DEBUG level for console output
+    level=logging.DEBUG,  # Keep DEBUG level for console output
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("info.log"),
+        logging.FileHandler("debug.log"),
         logging.StreamHandler()
     ]
 )
@@ -29,31 +29,30 @@ class Flow:
         self.topic_lst = self._set_topics()
         self.topic = None
         self.sequence = []
-        logging.info("Here are some topics:")
+        logging.info("------------Here is the list of common topics:------------")
         logging.info(self.topic_lst)
         
 
     def __START__(self):
-        """load agent info from the database"""
-        pass
+        """Load agent info from the database"""
+        logging.debug("------------Starting the conversation flow------------")
 
     def __CONDITION__(self):
         """Decide whether to explore or exploit."""
-        # Calculate the exploitation probability based on conversation history and scores
         exploitation_probability = self.calculate_exploitation_probability()
-
-        # Randomly choose between exploration and exploitation based on the probability
-        if self.sequence[-1] == 1 and random.random() < exploitation_probability: # if the last action was a response
-            logging.info("Exploration: Asking a new question.")
+        logging.debug(f"------------Exploitation probability: {exploitation_probability}------------")
+        if self.sequence[-1] == 1 and random.random() < exploitation_probability:
+            logging.info("------------Exploration: Asking a new question.------------")
             return Question
-        else: # if the last action was a question or when the condition suggests exploitation
-            logging.info("Answering the previous question")
+        else:
+            logging.info("------------Exploitation: Answering the previous question------------")
             return Response
 
             
     def calculate_exploitation_probability(self):
         """Calculate probability of exploitation based on current scores or other factors."""
-        #TODO LEARN IT BY POLICY
+        #TODO LEARN IT BY POLICY - CHEN LI
+        
         return 0.5
 
 
@@ -62,7 +61,7 @@ class Flow:
         # Implement the logic for ending the conversation here
         pass
     
-    def exchange(self, exchange_class: Callable, topic: str, sender: Agent, receiver: Agent, userID: str) -> str:
+    def exchange(self, exchange_class: Callable, topic: str, sender: Agent, receiver: Agent) -> str:
         """
         Handles the conversation exchange between the two agents using the provided exchange class.
 
@@ -96,7 +95,7 @@ class Flow:
             greeting_from_receiver = f"{receiver.name}: " + exchange_class(agent1=receiver, agent2=sender).send_message(topic)
             self.sequence.append(-1)
             self.conversation_history.append(greeting_from_receiver)
-            
+        
             # Combine both greetings
             mutual_greeting = f"{greeting_from_sender}\n{greeting_from_receiver}"
             return mutual_greeting
@@ -140,35 +139,56 @@ class Flow:
         """Returns the sequence of GQR."""
         return self.sequence
 
-
     def iter(self):
         """Executes the conversation flow."""
-        self.topic = prob_based_pick(self.topic_lst) # eliminiate topic_lst inplace
-        ## init ##
-        generated_greetings = self.exchange(Greeting, self.topic, self.agent1, self.agent2, userID="123-456-7890")
-
-        generated_question = self.exchange(Question, self.topic, self.agent1, self.agent2, userID="123-456-7890")
-        generated_response = self.exchange(Response, self.topic, self.agent2, self.agent1, userID="123-456-7890")
+        # Pick a topic using the probability-based picker and log it
+        self.topic = prob_based_pick(self.topic_lst)  # Eliminate topic_lst in place
+        logging.debug(f"Selected initial topic: {self.topic}")
+        
+        # Initialize the conversation with greetings
+        logging.debug("Starting conversation with greetings...")
+        generated_greetings = self.exchange(Greeting, self.topic, self.agent1, self.agent2)
+        logging.debug(f"Generated greetings: {generated_greetings}")
+        
+        # Start the exchange with a question and response
+        logging.debug("Proceeding with the first question...")
+        generated_question = self.exchange(Question, self.topic, self.agent1, self.agent2)
+        logging.debug(f"Generated first question: {generated_question}")
+        
+        logging.debug("Generating response to the first question...")
+        generated_response = self.exchange(Response, self.topic, self.agent2, self.agent1)
+        logging.debug(f"Generated first response: {generated_response}")
             
-        for _ in range(6):
-            if (len(self.sequence) % 2 == 1):
+        for i in range(6):
+            logging.debug(f"Starting iteration {i+1}")
+            
+            # Determine the primary and secondary agents
+            if len(self.sequence) % 2 == 1:
                 primary_agent = self.agent1
                 secondary_agent = self.agent2
             else:
                 primary_agent = self.agent2
                 secondary_agent = self.agent1
-
-            next_action = self.__CONDITION__()
-            if next_action == Question:
-                generated_question = self.exchange(Question,self.topic,primary_agent,secondary_agent)
-            else:
-                generated_response = self.exchange(Response,self.topic,primary_agent,secondary_agent)
-            
                 
-            logging.info(f"Current topic: {self.topic}")
+            logging.debug(f"Primary agent: {primary_agent.name}, Secondary agent: {secondary_agent.name}")
+            
+            # Decide the next action based on the conversation flow condition
+            next_action = self.__CONDITION__()
+            logging.debug(f"Next action determined: {'Question' if next_action == Question else 'Response'}")
+            
+            # Execute the next exchange based on the determined action
+            if next_action == Question:
+                generated_question = self.exchange(Question, self.topic, primary_agent, secondary_agent)
+                logging.debug(f"Generated question during iteration {i+1}: {generated_question}")
+            else:
+                generated_response = self.exchange(Response, self.topic, primary_agent, secondary_agent)
+                logging.debug(f"Generated response during iteration {i+1}: {generated_response}")
+            
+            logging.info(f"Current topic after iteration {i+1}: {self.topic}")
         
-        # Log the sequence to info.log instead of printing
-        logging.info(f"Sequence of GQR: {self.sequence}")
+        # Log the final sequence of actions
+        logging.info(f"Final sequence of GQR: {self.sequence}")
+
 
 
 if __name__ == "__main__":

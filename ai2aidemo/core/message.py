@@ -33,10 +33,9 @@ class Message(BaseModel, ABC):
     
     agent1: Agent
     agent2: Agent
-    userID: str
 
     @abstractmethod
-    def send_message(self, topic, conversation_history, userID):
+    def send_message(self, topic, conversation_history):
         pass
     
     @abstractmethod 
@@ -48,17 +47,12 @@ from typing import List
 
 
 class Question(Message):
-    def send_message(self, topic: str, conversation_history: List[str], userID: str):
+    def send_message(self, topic: str, conversation_history: List[str]):
         logging.debug(f"Sending message with topic: {topic} and conversation_history: {conversation_history}")
         
-        if not conversation_history:
-            last_message = ""
-            conversation_history_prior = ""
-        else:
-            last_message = conversation_history[-1]
-            conversation_history_prior = "\n".join(conversation_history[:-1])
+        last_message = conversation_history[-1] if conversation_history else ""
+        previous_conversation = "\n".join(conversation_history[:-1])
 
-        # Step 1: Analyze the Resume
         resume_analysis_prompt = (
             f"""
             Analyze the following resume:
@@ -70,11 +64,10 @@ class Question(Message):
         resume_analysis = self.agent1.inference(resume_analysis_prompt)
         logging.info(f"Resume Analysis: {resume_analysis}")
 
-        # Step 2: Analyze the Conversation History
         conversation_analysis_prompt = (
             f"""
             Analyze the following conversation history:
-            {conversation_history_prior}
+            {previous_conversation}
             
             Identify the key themes and the direction of the conversation.
             """
@@ -82,33 +75,28 @@ class Question(Message):
         conversation_analysis = self.agent1.inference(conversation_analysis_prompt)
         logging.info(f"Conversation Analysis: {conversation_analysis}")
 
-        # Step 3: Generate a Brief Comment on the Last Message
         comment_prompt = (
             f"""Reflect on the last message from {self.agent2.name}: "{last_message}".
             Based on the conversation history and the resume analysis, provide a brief comment that acknowledges or adds value to the last message.
-
-            format:
-            Keep the comment concise, no more than two sentences.
             """
         )
         brief_comment = self.agent1.inference(comment_prompt)
         logging.info(f"Generated comment: {brief_comment}")
 
-        # Step 4: Generate a Context-Aware Question
         prompt = (
-            f"""Here is the last message from your conversation: "{last_message}" from {self.agent2.name}, and the previous conversation: "{conversation_history_prior}".
+            f"""Here is the last message from your conversation: "{last_message}" from {self.agent2.name}, and the previous conversation: "{previous_conversation}".
             {self.agent2.name}'s resume: {resume_analysis}
 
-            task:
-            Reflect on the conversation history and the resume analysis, and generate a question about the topic "{topic}" that combines your knowledge, his experiences, and the last message given.
+            Generate a question about the topic "{topic}" that combines your knowledge, the other person's experiences, and the last message given.
 
-            example questions:
-            Thanks for accepting my connection request, Jordan! I see that you have experience with AI-driven applications. I'm particularly interested in how AI is being integrated into software development processes. How has your experience been with this?
+            Examples:
+            - "Given your experience with AI-driven applications, how do you see the role of AI evolving in {topic}?"
+            - "With your background in computer science, what challenges do you foresee in upcoming years?"
 
-            format:
-            Give only short, straightforward questions that make the conversation transition smoothly. Ensure the question is relevant to the topic and the last message given.
+            Format:
+            Short, straightforward questions that transition smoothly. Ensure relevance to the topic and the last message given.
 
-            output limit:
+            Output limit:
             Less than 50 words.
             """
         )
@@ -117,9 +105,9 @@ class Question(Message):
         logging.info(f"Generated Question - {self.agent1.name}: {result}")
         info_logger.info(f"Generated Question - {self.agent1.name}: {result}")  # Log to info.log
 
-        # Combine the comment and the question
         final_response = f"{brief_comment} {result}"
         return final_response
+
 
 
 
@@ -130,30 +118,27 @@ class Question(Message):
 
 
 
-
 class Response(Message):
-    def send_message(self, topic: str, conversation_history: List[str], userID: str):
+    def send_message(self, topic: str, conversation_history: List[str]):
         logging.debug(f"Sending RESPONSE with topic: {topic}, conversation_history: {conversation_history}")
         
         if not conversation_history:
-            raise ValueError("need conversation_history before answering questions")
+            raise ValueError("Need conversation_history before answering questions")
         
         last_message = conversation_history[-1]
         previous_conversation = "\n".join(conversation_history[:-1])
         
-        # Step 1: Analyze Resume
         resume_analysis_prompt = (
             f"""
             Analyze the following resume: 
             {self.agent2.enhanced_resume}
             
-            Identify key skills, experiences, and achievements that are directly related to the topic "{topic}".
+            Identify key skills, experiences, and achievements directly related to the topic "{topic}".
             """
         )
         resume_analysis = self.agent1.inference(resume_analysis_prompt)
         logging.info(f"Resume Analysis: {resume_analysis}")
         
-        # Step 2: Analyze the Conversation History
         conversation_analysis_prompt = (
             f"""
             Analyze the following conversation history:
@@ -165,8 +150,7 @@ class Response(Message):
         conversation_analysis = self.agent1.inference(conversation_analysis_prompt)
         logging.info(f"Conversation Analysis: {conversation_analysis}")
         
-        # Step 3: Generate a Context-Aware Response
-        response_type = "answer the question directly" if "?" in last_message else "build upon the previous comment"
+        response_type = "answer the question" if "?" in last_message else "build upon the previous comment"
         
         prompt = (
             f"""
@@ -175,31 +159,29 @@ class Response(Message):
             - Conversation Analysis: {conversation_analysis}
             - Last Message: {last_message}
             
-            task:
-            - If the last message was a question, {response_type} by using relevant knowledge from the resume and the conversation context. 
-            Ensure your response is cohesive and flows naturally from the last message.
+            Task:
+            - If the last message was a question, use relevant knowledge from the resume and the conversation context.
+            - If the last message was a comment, add new insights or valuable information that aligns with the documented experiences. Connect smoothly to the previous point.
 
-                example: Yeah, I had some experiences with that, I believe AI will continue to integrate deeper into software development, particularly in areas like automated testing, code generation, and real-time analytics. The combination of AI and DevOps is something I’m really looking forward to exploring more.
+            Examples:
+            - "Yes, so AI-driven robotic surgery systems, like the Da Vinci Surgical System, are increasingly being adopted in healthcare. These systems enhance surgical precision, reduce recovery times, and are particularly beneficial in complex procedures like cardiac and neurosurgery."
+            - "You're absolutely right. In addition, The integration of AI with advanced MRI techniques, such as diffusion tensor imaging (DTI), is improving the early detection of neurological disorders like Alzheimer’s and multiple sclerosis. This trend is enabling more personalized and timely treatment plans, significantly impacting patient outcomes."
 
-            - If the last message was a comment, {response_type} by adding new insights or valuable information that aligns with the individual's documented experiences. Make sure your comment connects smoothly to the previous point.
+            Format:
+            Provide a short and direct response relevant to the last message. Stay concise and ensure the response feels like a natural continuation.
 
-                example: In addition, I think the use of AI in predictive analytics within DevOps could be a game changer. Imagine being able to foresee potential system bottlenecks or failures before they occur, allowing teams to address issues proactively rather than reactively. 
+            Tone:
+            Keep the tone conversational and avoid repetitive phrases like "Absolutely."
 
-            format:
-            Provide a short and direct response that is relevant to the last message. Stay concise and cohesive to the last message make it as a continuity, and do not infer any personal experiences not documented in the resume.
-            You may include relevant career, education insights or how the topic relates to the background.
-
-            tone:
-            Keep the tone casual and conversational, ensuring your response feels naturally connected to the last message.
-
-            output limit:
-            Respond in less than 70 words.
+            Output limit:
+            Less than 70 words.
             """
         )
         result = self.agent1.inference(prompt)
         logging.info(f"Generated Response - {self.agent1.name}: {result}")
         info_logger.info(f"Generated Response - {self.agent1.name}: {result}")  # Log to info.log
         return result
+
 
     def received_message(self, message):
         message = "This is a mock received message."
@@ -210,7 +192,7 @@ class Response(Message):
 
 
 class Greeting(Message):
-    def send_message(self, topic, userID):
+    def send_message(self, topic):
         logging.debug(f"Sending GREETING with topic: {topic}")
         
         # Generate a greeting prompt based on agent's resume
@@ -281,12 +263,13 @@ if __name__ == "__main__":
     topic = prob_based_pick(topics_generator.generate_conversation_topics())
     
     conversation_history = []
-
+    phone1 = '608-407-2501'
+    phone2 = '607-407-2341'
     #### Greeting ####
-    agent1 = Agent(resume1)
-    agent2 = Agent(resume2)
+    agent1 = Agent(resume1,phone1)
+    agent2 = Agent(resume2,phone2)
     greeting = Greeting(agent1 =agent1, agent2=agent2)
-    generated_greeting = greeting.send_message(topic=topic, userID="123-456-7890")
+    generated_greeting = greeting.send_message(topic=topic)
     conversation_history.append(generated_greeting)
     
 
@@ -295,13 +278,13 @@ if __name__ == "__main__":
     #### Question ####
     question = Question(agent1=agent1, agent2=agent2)
     # Define a topic and conversation_history
-    generated_question = question.send_message(topic=topic, conversation_history=conversation_history, userID="123-456-7890")
+    generated_question = question.send_message(topic=topic, conversation_history=conversation_history)
     conversation_history.append(generated_question)
 
 
     #### Response ####
     response = Response(agent1=agent1, agent2=agent2)
-    generated_response = response.send_message(topic=topic, conversation_history=conversation_history, userID="123-456-7890")
+    generated_response = response.send_message(topic=topic, conversation_history=conversation_history)
 
 
 

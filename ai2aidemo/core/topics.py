@@ -80,13 +80,8 @@ class Topics:
             ]
         )
         
-        # Debugging the response from OpenAI
         logging.debug(f"Received response from OpenAI: {response}")
-
-        # Extract and return the list of topics from the AI's response
         topics = response.choices[0].message.content
-
-        # Split the response into lines and clean up any extraneous characters
         topic_list = [topic.strip() for topic in topics.split("\n") if topic.strip()]
         
         logging.debug(f"Extracted topics: {topic_list}")
