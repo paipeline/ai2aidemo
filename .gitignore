@@ -1,5 +1,6 @@
 .aider*
 venv/
+.venv
 .env
 debug.log
 .DS_Store
