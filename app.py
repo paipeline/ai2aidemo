@@ -41,7 +41,6 @@ if st.button('Start Conversation', disabled=not (resume_file1 and resume_file2))
     if resume_file1 and resume_file2:
         try:
             with st.spinner('Processing resumes and initializing agents...'):
-                # Create agents directly from PDF files
                 try:
                     agent1 = Agent(resume_file1)
                     agent2 = Agent(resume_file2)
@@ -50,41 +49,93 @@ if st.button('Start Conversation', disabled=not (resume_file1 and resume_file2))
                     logging.error(f"Resume processing error: {str(e)}", exc_info=True)
                     st.stop()
                 
-                # Display agents' names
-                st.info(f"Starting conversation between **{agent1.name}** and **{agent2.name}**")
+                # 添加CSS样式
+                st.markdown("""
+                <style>
+                    .chat-container {
+                        padding: 20px;
+                        border-radius: 10px;
+                        background-color: #f5f5f5;
+                        margin: 10px 0;
+                    }
+                    .message-container {
+                        display: flex;
+                        margin: 10px 0;
+                        align-items: flex-start;
+                    }
+                    .message-bubble {
+                        padding: 12px 15px;
+                        border-radius: 15px;
+                        max-width: 80%;
+                        margin: 5px;
+                        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                    }
+                    .message-left {
+                        background-color: #e3f2fd;
+                        margin-right: auto;
+                        border-bottom-left-radius: 5px;
+                    }
+                    .message-right {
+                        background-color: #f0fdf4;
+                        margin-left: auto;
+                        border-bottom-right-radius: 5px;
+                    }
+                    .avatar {
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        margin: 0 10px;
+                    }
+                    .name {
+                        font-size: 0.8em;
+                        color: #666;
+                        margin-bottom: 5px;
+                    }
+                    .content {
+                        font-size: 1em;
+                        color: #333;
+                        line-height: 1.4;
+                    }
+                </style>
+                """, unsafe_allow_html=True)
                 
-                # Initialize flow with user-defined turns
+                # 显示代理名称
+                st.info(f"Starting conversation between {agent1.name} and {agent2.name}")
+                
+                # 初始化对话流程
                 flow = Flow(agent1=agent1, agent2=agent2, num_turns=num_turns)
+                flow.iter()
                 
-                # Create a container for the chat
-                chat_container = st.container()
-                
-                with chat_container:
-                    st.subheader("Conversation")
-                    
-                    # Execute conversation flow
-                    flow.iter()
-                    
-                    # Display messages in chat format
+                # 创建聊天容器
+                with st.container():
                     for message in flow.conversation_history:
-                        # Extract name and content
                         name, content = message.split(": ", 1)
                         
-                        # Set avatar and style based on agent
+                        # 为每个代理设置不同的机器人图标和颜色
                         if name == agent1.name:
-                            avatar = "👨‍💼"  # Professional person 1
-                            with st.chat_message("user", avatar=avatar):
-                                st.write(f"**{name}**")
-                                st.write(content)
+                            st.markdown(f"""
+                            <div class="message-container">
+                                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=agent1" class="avatar">
+                                <div class="message-bubble message-left">
+                                    <div class="name">🤖 {name}</div>
+                                    <div class="content">{content}</div>
+                                </div>
+                            </div>
+                            """, unsafe_allow_html=True)
                         else:
-                            avatar = "👩‍💼"  # Professional person 2
-                            with st.chat_message("assistant", avatar=avatar):
-                                st.write(f"**{name}**")
-                                st.write(content)
+                            st.markdown(f"""
+                            <div class="message-container" style="flex-direction: row-reverse;">
+                                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=agent2" class="avatar">
+                                <div class="message-bubble message-right">
+                                    <div class="name" style="text-align: right;">🤖 {name}</div>
+                                    <div class="content">{content}</div>
+                                </div>
+                            </div>
+                            """, unsafe_allow_html=True)
                         
-                        # Add slight delay for visual effect
+                        # 添加消息动画延迟
                         time.sleep(0.5)
-                        
+                
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
             logging.error(f"Error during conversation: {e}", exc_info=True)

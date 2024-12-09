@@ -149,19 +149,19 @@ class Flow:
         """Executes the conversation flow."""
         self.topic = prob_based_pick(self.topic_lst)
         
-        # Initial exchange
-        intro1 = self.agent1.introduce()
-        self.conversation_history.append(f"{self.agent1.name}: {intro1}")
+        # 直接开始对话，无需正式介绍
+        response1 = self.agent1.start_casual_conversation(self.topic)
+        self.conversation_history.append(f"{self.agent1.name}: {response1}")
         
-        intro2 = self.agent2.respond_and_critique(intro1)
-        self.conversation_history.append(f"{self.agent2.name}: {intro2}")
+        response2 = self.agent2.respond_casually(response1)
+        self.conversation_history.append(f"{self.agent2.name}: {response2}")
         
-        # Subsequent turns
+        # 后续对话轮次
         for _ in range(self.num_turns - 1):
-            response1 = self.agent1.respond_and_critique(self.conversation_history[-1])
+            response1 = self.agent1.continue_conversation(self.conversation_history[-1])
             self.conversation_history.append(f"{self.agent1.name}: {response1}")
             
-            response2 = self.agent2.respond_and_critique(self.conversation_history[-1])
+            response2 = self.agent2.continue_conversation(self.conversation_history[-1])
             self.conversation_history.append(f"{self.agent2.name}: {response2}")
 
 

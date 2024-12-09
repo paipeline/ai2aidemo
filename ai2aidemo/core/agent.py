@@ -244,6 +244,60 @@ class Agent:
         
         return self.inference(prompt)
 
+    def start_casual_conversation(self, topic: str) -> str:
+        prompt = f"""
+        Start a casual conversation about {topic} based on your background:
+        {self.enhanced_resume}
+
+        guidelines:
+        - Keep it natural and informal
+        - Focus on the topic but be conversational
+        - Draw from your actual experience
+        - Make it engaging but brief
+
+        example:
+        "I've been working with ML models in finance lately - really interesting stuff. What's your take on AI in the financial sector?"
+
+        output limit:
+        Keep it under 40 words.
+        """
+        return self.inference(prompt)
+
+    def respond_casually(self, previous_message: str) -> str:
+        prompt = f"""
+        Respond naturally to this message: "{previous_message}"
+        Based on your background: {self.enhanced_resume}
+
+        guidelines:
+        - Keep it conversational and friendly
+        - Share relevant experiences from your background
+        - Add value to the discussion
+        - Keep the conversation flowing
+
+        example:
+        "That's interesting! In my recent project, we faced similar challenges with data processing. We found that..."
+
+        output limit:
+        Keep it under 50 words.
+        """
+        return self.inference(prompt)
+
+    def continue_conversation(self, previous_message: str) -> str:
+        prompt = f"""
+        Continue the conversation based on this message: "{previous_message}"
+        Your background: {self.enhanced_resume}
+
+        guidelines:
+        - Build on the previous point
+        - Share relevant insights
+        - Ask questions when appropriate
+        - Keep it natural and engaging
+
+        output limit:
+        Keep it under 50 words.
+        """
+        return self.inference(prompt)
+
 # Example usage
 if __name__ == '__main__':
     resume = {

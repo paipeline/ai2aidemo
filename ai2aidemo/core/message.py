@@ -208,28 +208,26 @@ class Response(Message):
 
 class Greeting(Message):
     def send_message(self, topic):
-        logging.debug(f"Sending GREETING with topic: {topic}")
-        
-        # Generate a greeting prompt based on agent's resume
-        prompt = (
-            f"""
-            Imagine you are {self.agent1.resume.name}, a professional with experience in {self.agent1.resume.experience}.
-            You are meeting {self.agent2.resume.name} for the first time. Write a friendly and professional greeting that introduces yourself and mentions your mutual interest in {topic}.
+        prompt = f"""
+            You are {self.agent1.resume.name}. Start a casual conversation with {self.agent2.resume.name} about {topic}.
+            
+            guidelines:
+            - Keep it natural and informal
+            - No need for formal introductions
+            - Jump straight into the topic if possible
+            - Make it sound like continuing an ongoing conversation
             
             example:
-            "Hi {self.agent2.resume.name}, it's great to meet you! I'm {self.agent1.resume.name}, a Software Engineer with a passion for AI. I’m really looking forward to our conversation, especially since we both have a strong background in AI and machine learning. Let's dive in!"
-
+            "Hey, I noticed you've done some interesting work with AI applications. What got you interested in that field?"
+            
             format:
-            The greeting should be brief, welcoming, and should set a positive tone for the conversation.
+            Keep it brief and conversational, like messaging a colleague.
             
             output limit:
-            less than 50 words
-            """
-        )
+            less than 30 words
+        """
         
         result = self.agent1.inference(prompt)
-        logging.info(f"Generated greeting - {self.agent1.name}: {result}")
-        info_logger.info(f"Generated greeting - {self.agent1.name}: {result}")  # Log to info.log
         return result
 
     def received_message(self, message):
