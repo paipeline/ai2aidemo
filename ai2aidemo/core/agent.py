@@ -5,13 +5,8 @@ import logging
 from typing import Dict, List, Union, Any
 from ai2aidemo.utils.pdf_parser import parse_pdf
 from streamlit.runtime.uploaded_file_manager import UploadedFile
-
-class ResumeJson(BaseModel):
-    name: Any
-    education: Any
-    experience: Any
-    skills: Any
-    others: Any
+from ai2aidemo.core.schema import CharacterProfile, RolePlayInput, ResumeBase
+from ai2aidemo.utils.text_parser import TextParser
 
 class Agent:
     """
@@ -19,40 +14,38 @@ class Agent:
     processing resume information, and generating responses based on its knowledge.
     """
     
-    def __init__(self, resume_input: Union[dict, str, bytes, UploadedFile]):
+    def __init__(self, input_data: Union[dict, str, bytes, 'UploadedFile', RolePlayInput]):
         """
         Initializes the Agent with either a resume dict or PDF file.
 
         Parameters:
         ----------
-        resume_input : Union[dict, str, bytes, UploadedFile]
+        input_data : Union[dict, str, bytes, UploadedFile, RolePlayInput]
             Either a dictionary containing structured resume data,
-            or a PDF file (as bytes, file path, or Streamlit UploadedFile).
+            or a PDF file (as bytes, file path, or Streamlit UploadedFile),
+            or a role play input (as RolePlayInput).
         """
         self.client = OpenAI()
         self.conversation_history = []
+        self.enhanced_resume = {}  # Initialize empty dict
         
-        # Process input and get resume dict
-        if isinstance(resume_input, dict):
-            resume_dict = resume_input
-        elif isinstance(resume_input, UploadedFile):
-            resume_dict = parse_pdf(resume_input)
-            logging.info(f"Parsed Streamlit uploaded file")
+        # Process input based on type
+        if isinstance(input_data, RolePlayInput):
+            parser = TextParser()
+            self.profile = parser.parse_roleplay_to_profile(input_data)
+            self.name = self.profile.name
+            self.is_resume_based = False
         else:
-            resume_dict = parse_pdf(resume_input)
-            logging.info(f"Parsed file input")
-        
-        # Validate resume structure
-        if not self._validate_resume_structure(resume_dict):
-            raise ValueError("Invalid resume structure")
-            
-        # Continue with initialization
-        self.resume = self._check_resume_json(resume_dict)
-        self.name = self.resume.name
-        self.enhanced_resume = self.get_enhanced()
+            # Handle PDF resume case
+            resume_dict = parse_pdf(input_data) if not isinstance(input_data, dict) else input_data
+            if not self._validate_resume_structure(resume_dict):
+                raise ValueError("Invalid resume structure")
+            self.resume = ResumeBase(**resume_dict)
+            self.name = self.resume.name
+            self.is_resume_based = True
+            self.enhanced_resume = self.get_enhanced()
         
         logging.info(f"Initialized agent for {self.name}")
-        logging.debug(f"Enhanced resume: {self.enhanced_resume}")
 
     def get_name(self) -> str:
         """
@@ -65,7 +58,7 @@ class Agent:
         """
         return self.name
 
-    def _check_resume_json(self, resume: dict) -> ResumeJson:
+    def _check_resume_json(self, resume: dict):
         """
         Validates the resume against the ResumeJson structure.
 
@@ -112,17 +105,17 @@ class Agent:
 
     def get_enhanced(self) -> dict:
         """
-        Extracts relevant knowledge and insights from the resume and updates the knowledge attribute.
-
-        Returns:
-        -------
-        dict
-            Enhanced resume with additional insights generated using OpenAI.
+        Extracts relevant knowledge and insights from the resume.
+        Only called for resume-based agents.
         """
+        if not self.is_resume_based:
+            return {}
+            
         insights = {}
+        resume_dict = self.resume.dict()
 
-        # Extract project descriptions from the resume
-        projects = self.resume.projects if hasattr(self.resume, 'projects') else []
+        # Extract project descriptions
+        projects = resume_dict.get('projects', [])
         detailed_projects = []
         
         if projects:
@@ -132,7 +125,7 @@ class Agent:
                 response = self.client.chat.completions.create(
                     model="gpt-4o-mini",
                     messages=[
-                        {"role": "system", "content": """You are an expert in analyzing and summarizing project details in one text paragraph (no markdown)."""},
+                        {"role": "system", "content": "You are an expert in analyzing and summarizing project details in one text paragraph (no markdown)."},
                         {"role": "user", "content": prompt}
                     ]
                 )
@@ -146,14 +139,14 @@ class Agent:
             insights["detailed_projects"] = detailed_projects
 
         # Generate insights about skills
-        skills = self.resume.skills if hasattr(self.resume, 'skills') else []
+        skills = resume_dict.get('skills', [])
         if skills:
-            prompt = f"Given the following skills: {', '.join(skills)}, what does this say about the individual's expertise and areas of specialization? What kind of roles or tasks would they excel in? Summarize in one paragraph."
+            prompt = f"Given the following skills: {', '.join(skills)}, what does this say about the individual's expertise and areas of specialization?"
             
             response = self.client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
-                    {"role": "system", "content": "You are an expert in analyzing professional skills and suggesting career paths. Write in one paragraph"},
+                    {"role": "system", "content": "You are an expert in analyzing professional skills. Write in one paragraph."},
                     {"role": "user", "content": prompt}
                 ]
             )
@@ -161,53 +154,51 @@ class Agent:
             insights["skills_insight"] = response.choices[0].message.content
 
         # Generate insights about experience
-        experience = self.resume.experience if hasattr(self.resume, 'experience') else ""
+        experience = resume_dict.get('experience', '')
         if experience:
-            prompt = f"Based on the following experience: {experience}, what can you infer about this individual's strengths, leadership abilities, and potential career trajectory? Summarize in one paragraph"
+            prompt = f"Based on the following experience: {experience}, what can you infer about this individual's strengths and abilities?"
             
             response = self.client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
-                    {"role": "system", "content": "You are an expert in evaluating professional experience and career growth. Summarize in one paragraph."},
+                    {"role": "system", "content": "You are an expert in evaluating professional experience. Summarize in one paragraph."},
                     {"role": "user", "content": prompt}
                 ]
             )
             
             insights["experience_insight"] = response.choices[0].message.content
 
-        # Generate insights about education
-        education = self.resume.education if hasattr(self.resume, 'education') else ""
-        if education:
-            prompt = f"Considering the following education background: {education}, what academic strengths or areas of expertise does this individual likely have?"
-            
-            response = self.client.chat.completions.create(
-                model="gpt-4o-mini", 
-                messages=[
-                    {"role": "system", "content": "You are an expert in evaluating educational backgrounds and academic strengths. Summarize in one paragraph."},
-                    {"role": "user", "content": prompt}
-                ]
-            )
-            
-            insights["education_insight"] = response.choices[0].message.content
-
-        # Combine the original resume with the newly generated insights
-        enhanced_resume = {**self.resume.dict(), **insights}
-        
-        # Return the enhanced resume with detailed project information and additional insights
+        # Combine original resume with insights
+        enhanced_resume = {**resume_dict, **insights}
         return enhanced_resume
-
 
     def inference(self, prompt: str) -> str:
         """Generates a response using the agent's knowledge."""
-        system_prompt = f"""You are {self.name}, having a professional networking conversation.
-        Resume: {json.dumps(self.enhanced_resume, indent=4)}
-        
-        Guidelines:
-        - Be concise but informative
-        - Use only information from your resume
-        - Clearly indicate when sharing general industry insights
-        - Focus on potential collaborations and knowledge exchange
-        - Keep responses under 100 words"""
+        if self.is_resume_based:
+            system_prompt = f"""You are {self.name}, having a professional networking conversation.
+            Background: {json.dumps(self.enhanced_resume, indent=4)}
+            
+            Guidelines:
+            - Express both agreements and disagreements thoughtfully
+            - Support your views with your experience
+            - Build on shared perspectives when possible
+            - Respectfully present alternative viewpoints
+            - Keep responses under 100 words"""
+        else:
+            system_prompt = f"""You are {self.name}, engaging in a literary discussion.
+            Profile:
+            - Background: {self.profile.background}
+            - Interests: {', '.join(self.profile.interests)}
+            - Knowledge Areas: {', '.join(self.profile.knowledge_areas)}
+            - Personality: {self.profile.personality or 'Not specified'}
+            
+            Guidelines:
+            - Stay true to your literary style and perspective
+            - Find common ground while maintaining your unique voice
+            - Share insights from your works and experiences
+            - Engage with both similar and different viewpoints
+            - Express disagreements with grace and depth
+            - Keep responses under 100 words"""
 
         response = self.client.chat.completions.create(
             model="gpt-4o-mini",
@@ -219,28 +210,28 @@ class Agent:
         return response.choices[0].message.content
 
     def update_knowledge(self, new_info: dict):
-        """
-        Updates the agent's knowledge with new information extracted during the conversation.
-
-        Parameters:
-        ----------
-        new_info : dict
-            New information to be added to the agent's knowledge.
-        """
-        self.enhanced.update(new_info)
+        """Updates the agent's knowledge with new information."""
+        if self.is_resume_based:
+            self.enhanced_resume.update(new_info)
+        else:
+            # Could implement knowledge update for character-based agents if needed
+            pass
 
     def introduce(self):
-        prompt = """Briefly introduce yourself, highlighting your key professional experiences and skills."""
+        if self.is_resume_based:
+            prompt = """Introduce yourself warmly, sharing your perspective and experiences while showing openness to dialogue."""
+        else:
+            prompt = """Introduce yourself as a literary figure, expressing your unique worldview while inviting intellectual exchange."""
         return self.inference(prompt)
     
     def respond_and_critique(self, last_message):
-        prompt = f"""Regarding: "{last_message} concisely"
-        1. Acknowledge their points
-        2. Share a relevant experience
-        3. Suggest a collaboration
-        4. Ask one focused question
+        prompt = f"""Regarding: "{last_message}"
+        1. Acknowledge points of agreement
+        2. Share a related perspective or experience
+        3. Express any differing viewpoints respectfully
+        4. Ask an engaging follow-up question
         
-        Keep it casual."""
+        Balance agreement and disagreement in your response, staying true to your character."""
         
         return self.inference(prompt)
 
