@@ -1,0 +1,16 @@
+.aider*
+venv/
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+TODO
+debug.log
+bert_large_qa_model.pth
+.DS_Store
+ai2aidemo/__pycache__
+.trunk
+utils/__pycache__
+
