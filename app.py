@@ -7,7 +7,61 @@ import time
 import logging
 load_dotenv()
 
-# 添加示例角色数据
+# Add custom CSS styles
+st.markdown("""
+<style>
+    /* Chat container styles */
+    .chat-container {
+        background-color: #f0f2f6;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 10px 0;
+    }
+    
+    /* Message styles */
+    .stChatMessage {
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 15px;
+    }
+    
+    /* Username styles */
+    .user-name {
+        font-size: 0.9em;
+        color: #555;
+        margin-bottom: 5px;
+    }
+    
+    /* Timestamp styles */
+    .timestamp {
+        font-size: 0.8em;
+        color: #888;
+        margin-top: 5px;
+    }
+    
+    /* Custom avatar styles */
+    .avatar-cheon {
+        background-color: #e6f3ff;
+        border-radius: 50%;
+        padding: 5px;
+    }
+    
+    .avatar-marquez {
+        background-color: #fff3e6;
+        border-radius: 50%;
+        padding: 5px;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Define character avatars
+CHARACTER_AVATARS = {
+    "Cheon Myeong-kwan": "🐳",
+    "Gabriel García Márquez": "🤖",  
+    "default_1": "👤",
+    "default_2": "👥",
+}
+
 EXAMPLE_CHARACTERS = {
     "cheon": {
         "name": "Cheon Myeong-kwan",
@@ -27,7 +81,7 @@ Plot Overview: Set in the fictional town of Macondo, the novel chronicles multip
 def create_role_play_input(agent_number: int):
     st.subheader(f"Character {agent_number}")
     
-    # 添加示例选择器
+    # Add example selector
     use_example = st.checkbox(f"Use example character for Agent {agent_number}", key=f"use_example_{agent_number}")
     
     if use_example:
@@ -37,13 +91,12 @@ def create_role_play_input(agent_number: int):
             key=f"example_choice_{agent_number}"
         )
         
-        # 根据选择加载示例数据
         if example_choice == "Cheon Myeong-kwan":
             char_data = EXAMPLE_CHARACTERS["cheon"]
         else:
             char_data = EXAMPLE_CHARACTERS["marquez"]
             
-        # 显示预填充的字段
+        # Show pre-filled fields
         st.text_input("Name", value=char_data["name"], key=f"name_input_{agent_number}", disabled=True)
         st.text_area(
             "Character Description",
@@ -64,7 +117,7 @@ def create_role_play_input(agent_number: int):
             personality=char_data["personality"]
         )
     else:
-        # 原有的手动输入表单
+        # Original manual input form
         name = st.text_input(
             "Name",
             key=f"name_input_manual_{agent_number}"
@@ -88,8 +141,22 @@ def create_role_play_input(agent_number: int):
             )
         return None
 
+def display_chat_message(name: str, content: str, is_first_agent: bool):
+    """Display formatted chat message"""
+    avatar = CHARACTER_AVATARS.get(name, CHARACTER_AVATARS["default_1" if is_first_agent else "default_2"])
+    message_type = "user" if is_first_agent else "assistant"
+    
+    with st.chat_message(message_type, avatar=avatar):
+        col1, col2 = st.columns([4, 1])
+        with col1:
+            st.markdown(f"**{name}**")
+        with col2:
+            st.markdown(f"<div class='timestamp'>{time.strftime('%H:%M')}</div>", unsafe_allow_html=True)
+        
+        st.markdown(content)
+
 def main():
-    st.title('AI Characters Discussion')
+    st.title('Virtual Minds in Dialogue')
     
     input_method = st.sidebar.radio(
         "Choose Input Method",
@@ -138,37 +205,52 @@ def main():
         start_disabled = not (agent1_input and agent2_input)
     
     if st.button(
-        'Start Conversation', 
+        'Begin Dialogue', 
         disabled=start_disabled,
         key="start_button"
     ):
         try:
-            with st.spinner('Initializing agents...'):
+            with st.spinner('Preparing the conversation...'):
                 agent1 = Agent(agent1_input)
                 agent2 = Agent(agent2_input)
                 
-                st.info(f"Starting conversation between **{agent1.name}** and **{agent2.name}**")
+                st.info(f"💭 A dialogue between **{agent1.name}** and **{agent2.name}**")
                 
                 flow = Flow(agent1=agent1, agent2=agent2, num_turns=num_turns)
+                
+                # Create dialogue container
                 chat_container = st.container()
                 
                 with chat_container:
-                    st.subheader("Conversation")
+                    st.markdown("### 📜 Dialogue")
+                    
+                    # Add separator
+                    st.markdown("---")
+                    
+                    # Show progress bar
+                    progress_bar = st.progress(0)
+                    
+                    # Start dialogue
                     flow.iter()
                     
-                    for message in flow.conversation_history:
+                    # Display messages
+                    for i, message in enumerate(flow.conversation_history):
                         name, content = message.split(": ", 1)
-                        avatar = "👨‍💼" if name == agent1.name else "👩‍💼"
+                        is_first_agent = (name == agent1.name)
                         
-                        with st.chat_message(
-                            "user" if name == agent1.name else "assistant", 
-                            avatar=avatar
-                        ):
-                            st.write(f"**{name}**")
-                            st.write(content)
-                            
+                        # Update progress
+                        progress = (i + 1) / len(flow.conversation_history)
+                        progress_bar.progress(progress)
+                        
+                        # Display message
+                        display_chat_message(name, content, is_first_agent)
+                        
+                        # Add animation effect
                         time.sleep(0.5)
-                
+                    
+                    # Show completion message
+                    st.success("🎭 Dialogue completed!")
+                    
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
             logging.error(f"Error during conversation: {e}", exc_info=True)
