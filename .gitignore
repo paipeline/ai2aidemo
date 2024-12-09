@@ -1,5 +1,6 @@
 .aider*
 venv/
+.venv
 .env
 .venv/
 debug.log
