@@ -1,6 +1,7 @@
 .aider*
 venv/
 .env
+.venv/
 debug.log
 .DS_Store
 ai2aidemo/__pycache__
