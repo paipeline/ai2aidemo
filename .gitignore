@@ -1,6 +1,12 @@
 .aider*
 venv/
 .env
+debug.log
+.DS_Store
+ai2aidemo/__pycache__
+.trunk
+utils/__pycache__
+info.log
 __pycache__/
 *.pyc
 *.pyo
